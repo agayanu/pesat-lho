@@ -18,6 +18,37 @@
                     <div class="menu-title">Dashboard</div>
                 </a>
             </li>
+            <li class="menu-label">MASTER DATA</li>
+            <li {{ Request::is('positions*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('positions.index') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">badge</i></div>
+                    <div class="menu-title">Data Jabatan</div>
+                </a>
+            </li>
+            <li {{ Request::is('teachers*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('teachers.index') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">record_voice_over</i></div>
+                    <div class="menu-title">Data Guru</div>
+                </a>
+            </li>
+            <li {{ Request::is('classes*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('classes.index') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">meeting_room</i></div>
+                    <div class="menu-title">Data Kelas</div>
+                </a>
+            </li>
+            <li {{ Request::is('students*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('students.index') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">groups</i></div>
+                    <div class="menu-title">Data Siswa</div>
+                </a>
+            </li>
+            <li {{ Request::is('users*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('users.index') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">manage_accounts</i></div>
+                    <div class="menu-title">Data User</div>
+                </a>
+            </li>
         </ul>
     </div>
     <div class="sidebar-bottom gap-4">
