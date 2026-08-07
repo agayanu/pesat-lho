@@ -12,6 +12,9 @@ use App\Http\Controllers\TeachingModuleController;
 use App\Http\Controllers\PiketModuleController;
 use App\Http\Controllers\SpecialActivityController;
 use App\Http\Controllers\PhModuleController;
+use App\Http\Controllers\KadepModuleController;
+use App\Http\Controllers\KepsekModuleController;
+use App\Http\Controllers\LhoPrintController;
 
 Route::get('/', [AuthController::class, 'showFormLogin'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
@@ -54,7 +57,19 @@ Route::middleware(['auth'])->group(function () {
     // Modul PH (Penanggung Jawab Harian)
     Route::get('ph/dashboard', [PhModuleController::class, 'index'])->name('ph.dashboard');
     Route::post('ph/notes', [PhModuleController::class, 'storeNotes'])->name('ph.notes.store');
+
+    // Modul Kepala Departemen
+    Route::get('kadep/dashboard', [KadepModuleController::class, 'index'])->name('kadep.dashboard');
+    Route::post('kadep/notes', [KadepModuleController::class, 'storeNotes'])->name('kadep.notes.store');
+
+    // Modul Kepala Sekolah
+    Route::get('kepsek/dashboard', [KepsekModuleController::class, 'index'])->name('kepsek.dashboard');
+    Route::post('kepsek/notes', [KepsekModuleController::class, 'storeNotes'])->name('kepsek.notes.store');
+
+    // Cetak / Ekspor LHO
+    Route::get('lho/print', [LhoPrintController::class, 'print'])->name('lho.print');
 });
+
 
 
 

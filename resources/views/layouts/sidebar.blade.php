@@ -70,6 +70,27 @@
                     <div class="menu-title">Laporan & Catatan PH</div>
                 </a>
             </li>
+            <li class="menu-label">KEPALA DEPARTEMEN</li>
+            <li {{ Request::is('kadep/dashboard*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('kadep.dashboard') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">supervisor_account</i></div>
+                    <div class="menu-title">Laporan & Catatan Kadep</div>
+                </a>
+            </li>
+            <li class="menu-label">KEPALA SEKOLAH</li>
+            <li {{ Request::is('kepsek/dashboard*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('kepsek.dashboard') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">school</i></div>
+                    <div class="menu-title">Laporan & Arahan Kepsek</div>
+                </a>
+            </li>
+            <li class="menu-label">CETAK LAPORAN</li>
+            <li>
+                <a href="{{ route('lho.print') }}" target="_blank">
+                    <div class="parent-icon"><i class="material-icons-outlined">print</i></div>
+                    <div class="menu-title">Cetak LHO Terpadu</div>
+                </a>
+            </li>
             <li class="menu-label">MASTER DATA</li>
             <li {{ Request::is('positions*') ? 'class="mm-active"' : '' }}>
                 <a href="{{ route('positions.index') }}">
