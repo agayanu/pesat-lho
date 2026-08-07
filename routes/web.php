@@ -10,6 +10,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TeachingModuleController;
 use App\Http\Controllers\PiketModuleController;
+use App\Http\Controllers\SpecialActivityController;
 
 Route::get('/', [AuthController::class, 'showFormLogin'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
@@ -43,7 +44,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('piket/school-events', [PiketModuleController::class, 'schoolEvents'])->name('piket.school-events');
     Route::post('piket/school-events', [PiketModuleController::class, 'storeSchoolEvent'])->name('piket.school-events.store');
     Route::delete('piket/school-events/{id}', [PiketModuleController::class, 'destroySchoolEvent'])->name('piket.school-events.destroy');
+
+    // Modul Penanggung Jawab Kegiatan Spesifik
+    Route::get('special-activities', [SpecialActivityController::class, 'index'])->name('special-activities.index');
+    Route::post('special-activities', [SpecialActivityController::class, 'store'])->name('special-activities.store');
+    Route::delete('special-activities/{id}', [SpecialActivityController::class, 'destroy'])->name('special-activities.destroy');
 });
+
 
 
 

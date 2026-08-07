@@ -56,6 +56,13 @@
                     <div class="menu-title">Event & Kejadian Sekolah</div>
                 </a>
             </li>
+            <li class="menu-label">PENANGGUNG JAWAB KEGIATAN</li>
+            <li {{ Request::is('special-activities*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('special-activities.index') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">assignment</i></div>
+                    <div class="menu-title">Laporan Kegiatan Spesifik</div>
+                </a>
+            </li>
             <li class="menu-label">MASTER DATA</li>
             <li {{ Request::is('positions*') ? 'class="mm-active"' : '' }}>
                 <a href="{{ route('positions.index') }}">
