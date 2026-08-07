@@ -63,6 +63,13 @@
                     <div class="menu-title">Laporan Kegiatan Spesifik</div>
                 </a>
             </li>
+            <li class="menu-label">PENANGGUNG JAWAB HARIAN (PH)</li>
+            <li {{ Request::is('ph/dashboard*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('ph.dashboard') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">fact_check</i></div>
+                    <div class="menu-title">Laporan & Catatan PH</div>
+                </a>
+            </li>
             <li class="menu-label">MASTER DATA</li>
             <li {{ Request::is('positions*') ? 'class="mm-active"' : '' }}>
                 <a href="{{ route('positions.index') }}">

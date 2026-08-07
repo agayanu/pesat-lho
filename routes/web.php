@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TeachingModuleController;
 use App\Http\Controllers\PiketModuleController;
 use App\Http\Controllers\SpecialActivityController;
+use App\Http\Controllers\PhModuleController;
 
 Route::get('/', [AuthController::class, 'showFormLogin'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
@@ -49,7 +50,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('special-activities', [SpecialActivityController::class, 'index'])->name('special-activities.index');
     Route::post('special-activities', [SpecialActivityController::class, 'store'])->name('special-activities.store');
     Route::delete('special-activities/{id}', [SpecialActivityController::class, 'destroy'])->name('special-activities.destroy');
+
+    // Modul PH (Penanggung Jawab Harian)
+    Route::get('ph/dashboard', [PhModuleController::class, 'index'])->name('ph.dashboard');
+    Route::post('ph/notes', [PhModuleController::class, 'storeNotes'])->name('ph.notes.store');
 });
+
 
 
 
