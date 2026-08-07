@@ -13,31 +13,96 @@ class MasterDataSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Seed Positions
-        $posAdmin = DB::table('positions')->insertGetId([
-            'name'       => 'Administrator',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $positions = [
+            'Administrator',
+            'Guru Kelas / Pengajar',
+            'Guru Piket',
+            'Penanggung Jawab Kegiatan',
+            'PH (Penanggung Jawab Harian)',
+            'Kepala Departemen',
+            'Kepala Sekolah',
+        ];
 
-        $posGuru = DB::table('positions')->insertGetId([
-            'name'       => 'Guru',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $posMap = [];
+        foreach ($positions as $posName) {
+            $existing = DB::table('positions')->where('name', $posName)->first();
+            if (!$existing) {
+                $id = DB::table('positions')->insertGetId([
+                    'name'       => $posName,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $posMap[$posName] = $id;
+            } else {
+                $posMap[$posName] = $existing->id;
+            }
+        }
 
-        // 2. Seed Default Admin User if not exist
-        if (DB::table('users')->where('username', 'admin')->count() == 0) {
-            DB::table('users')->insert([
-                'name'       => 'Administrator Utama',
-                'username'   => 'admin',
-                'password'   => Hash::make('admin123'),
-                'gender'     => 'L',
-                'position'   => $posAdmin,
-                'user'       => 'system',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        // Default Users per Role
+        $defaultUsers = [
+            ['name' => 'Administrator Utama','username' => 'admin',
+                'password' => Hash::make('admin123'),
+                'gender'   => 'L',
+                'position' => $posMap['Administrator'] ?? 1,
+                'user'     => 'system',
+            ],
+            [
+                'name'     => 'Guru Pengajar Test',
+                'username' => 'guru',
+                'password' => Hash::make('guru123'),
+                'gender'   => 'L',
+                'position' => $posMap['Guru Kelas / Pengajar'] ?? 2,
+                'user'     => 'system',
+            ],
+            [
+                'name'     => 'Guru Piket Sekolah',
+                'username' => 'piket',
+                'password' => Hash::make('piket123'),
+                'gender'   => 'P',
+                'position' => $posMap['Guru Piket'] ?? 3,
+                'user'     => 'system',
+            ],
+            [
+                'name'     => 'Penanggung Jawab BBQ/Dhuha',
+                'username' => 'pj_kegiatan',
+                'password' => Hash::make('pj123'),
+                'gender'   => 'L',
+                'position' => $posMap['Penanggung Jawab Kegiatan'] ?? 4,
+                'user'     => 'system',
+            ],
+            [
+                'name'     => 'Bapak PH Harian',
+                'username' => 'ph',
+                'password' => Hash::make('ph123'),
+                'gender'   => 'L',
+                'position' => $posMap['PH (Penanggung Jawab Harian)'] ?? 5,
+                'user'     => 'system',
+            ],
+            [
+                'name'     => 'Kepala Departemen PESAT',
+                'username' => 'kadep',
+                'password' => Hash::make('kadep123'),
+                'gender'   => 'L',
+                'position' => $posMap['Kepala Departemen'] ?? 6,
+                'user'     => 'system',
+            ],
+            [
+                'name'     => 'Kepala Sekolah PESAT',
+                'username' => 'kepsek',
+                'password' => Hash::make('kepsek123'),
+                'gender'   => 'L',
+                'position' => $posMap['Kepala Sekolah'] ?? 7,
+                'user'     => 'system',
+            ],
+        ];
+
+        foreach ($defaultUsers as $userData) {
+            if (DB::table('users')->where('username', $userData['username'])->count() == 0) {
+                DB::table('users')->insert(array_merge($userData, [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]));
+            }
         }
     }
 }

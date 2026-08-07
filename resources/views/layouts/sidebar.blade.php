@@ -18,6 +18,44 @@
                     <div class="menu-title">Dashboard</div>
                 </a>
             </li>
+            <li class="menu-label">PELAPORAN GURU</li>
+            <li {{ Request::is('teaching') && !Request::is('teaching/history') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('teaching.index') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">edit_note</i></div>
+                    <div class="menu-title">Input Presensi & KBM</div>
+                </a>
+            </li>
+            <li {{ Request::is('teaching/history') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('teaching.history') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">history_edu</i></div>
+                    <div class="menu-title">Riwayat KBM Saya</div>
+                </a>
+            </li>
+            <li class="menu-label">GURU PIKET</li>
+            <li {{ Request::is('piket/dashboard*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('piket.dashboard') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">dashboard</i></div>
+                    <div class="menu-title">Monitoring Piket</div>
+                </a>
+            </li>
+            <li {{ Request::is('piket/student-absences*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('piket.student-absences') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">fact_check</i></div>
+                    <div class="menu-title">Koreksi Presensi Siswa</div>
+                </a>
+            </li>
+            <li {{ Request::is('piket/teacher-absences*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('piket.teacher-absences') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">person_off</i></div>
+                    <div class="menu-title">Absensi Guru & Tugas</div>
+                </a>
+            </li>
+            <li {{ Request::is('piket/school-events*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('piket.school-events') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">event</i></div>
+                    <div class="menu-title">Event & Kejadian Sekolah</div>
+                </a>
+            </li>
             <li class="menu-label">MASTER DATA</li>
             <li {{ Request::is('positions*') ? 'class="mm-active"' : '' }}>
                 <a href="{{ route('positions.index') }}">
