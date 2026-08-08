@@ -22,6 +22,13 @@
     </div>
 @endif
 
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 @if ($errors->any())
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <ul class="mb-0">
@@ -113,7 +120,7 @@
                         <th>Pembimbing / Guru</th>
                         <th>Keterangan</th>
                         <th>Pencatat</th>
-                        <th style="width: 80px;" class="text-center">Aksi</th>
+                        <th style="width: 100px;" class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -127,13 +134,17 @@
                             <td>{{ $r->notes ?? '-' }}</td>
                             <td><small class="text-muted">{{ $r->user }}</small></td>
                             <td class="text-center">
-                                <form action="{{ route('special-activities.destroy', $r->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan kegiatan ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="material-icons-outlined">delete</i>
-                                    </button>
-                                </form>
+                                @if(Auth::user()->name == $r->user || Auth::user()->position == 1 || Auth::user()->position == 4)
+                                    <form action="{{ route('special-activities.destroy', $r->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan kegiatan ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="material-icons-outlined">delete</i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="badge bg-secondary">ReadOnly</span>
+                                @endif
                             </td>
                         </tr>
                     @empty

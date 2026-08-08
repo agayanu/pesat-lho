@@ -7,9 +7,9 @@ use App\Models\SchoolEvent;
 use App\Models\SpecialActivityReport;
 use App\Models\Student;
 use App\Models\StudentAbsence;
-use App\Models\Teacher;
 use App\Models\TeacherAbsence;
 use App\Models\TeachingJournal;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -82,7 +82,6 @@ class PiketModuleController extends Controller
         $piketUser = Auth::user()->name ?? 'Guru Piket';
 
         if ($request->status == 'Hadir') {
-            // If changed to Hadir, soft-delete or remove the absence record
             $absence->update([
                 'is_edited_by_piket' => true,
                 'piket_user'         => $piketUser,
@@ -112,7 +111,7 @@ class PiketModuleController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $teachers  = Teacher::orderBy('name', 'asc')->get();
+        $teachers  = User::orderBy('name', 'asc')->get();
         $classList = Classes::orderBy('code', 'asc')->get();
 
         return view('piket.teacher_absences', compact('date', 'teacherAbsences', 'teachers', 'classList'));

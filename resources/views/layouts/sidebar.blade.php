@@ -31,6 +31,13 @@
                     <div class="menu-title">Riwayat KBM Saya</div>
                 </a>
             </li>
+            <li class="menu-label">WALI KELAS</li>
+            <li {{ Request::is('walikelas/dashboard*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('walikelas.dashboard') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">visibility</i></div>
+                    <div class="menu-title">Monitoring Kelas Saya</div>
+                </a>
+            </li>
             <li class="menu-label">GURU PIKET</li>
             <li {{ Request::is('piket/dashboard*') ? 'class="mm-active"' : '' }}>
                 <a href="{{ route('piket.dashboard') }}">
@@ -96,12 +103,6 @@
                 <a href="{{ route('positions.index') }}">
                     <div class="parent-icon"><i class="material-icons-outlined">badge</i></div>
                     <div class="menu-title">Data Jabatan</div>
-                </a>
-            </li>
-            <li {{ Request::is('teachers*') ? 'class="mm-active"' : '' }}>
-                <a href="{{ route('teachers.index') }}">
-                    <div class="parent-icon"><i class="material-icons-outlined">record_voice_over</i></div>
-                    <div class="menu-title">Data Guru</div>
                 </a>
             </li>
             <li {{ Request::is('classes*') ? 'class="mm-active"' : '' }}>

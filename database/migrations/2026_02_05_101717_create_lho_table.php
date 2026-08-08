@@ -20,7 +20,7 @@ return new class extends Migration
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
             $table->string('code');
-            $table->integer('homeroom');
+            $table->integer('homeroom'); // References users.id
             $table->enum('school', ['Unggulan', 'Reguler']);
             $table->string('user');
             $table->timestamps();
@@ -35,15 +35,6 @@ return new class extends Migration
             $table->string('classes');
             $table->enum('program', ['Pioneer', 'Unggulan', 'Reguler']);
             $table->string('studentday')->nullable();
-            $table->string('user');
-            $table->timestamps();
-            $table->timestamp('deleted_at')->nullable();
-        });
-
-        Schema::create('teachers', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->enum('gender', ['L', 'P']);
             $table->string('user');
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
@@ -76,7 +67,6 @@ return new class extends Migration
         Schema::dropIfExists('positions');
         Schema::dropIfExists('classes');
         Schema::dropIfExists('students');
-        Schema::dropIfExists('teachers');
         Schema::dropIfExists('student_absences');
         Schema::dropIfExists('teaching_activities');
     }

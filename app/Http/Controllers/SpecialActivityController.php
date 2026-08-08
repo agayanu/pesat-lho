@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Classes;
 use App\Models\SpecialActivityReport;
-use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,7 +37,7 @@ class SpecialActivityController extends Controller
         }
 
         $reports = $reportsQuery->orderBy('id', 'desc')->get();
-        $teachers = Teacher::orderBy('name', 'asc')->get();
+        $teachers = User::orderBy('name', 'asc')->get();
         $classList = Classes::orderBy('code', 'asc')->get();
 
         return view('special_activities.index', compact(
@@ -82,6 +82,13 @@ class SpecialActivityController extends Controller
     public function destroy($id)
     {
         $report = SpecialActivityReport::findOrFail($id);
+        $currentUser = Auth::user()->name ?? '';
+
+        // Only creator of report or Admin/Piket can delete
+        if ($report->user !== $currentUser && Auth::user()->position != 1 && Auth::user()->position != 4) {
+            return redirect()->back()->with('error', 'Anda tidak dapat menghapus laporan yang dibuat oleh rekan lain.');
+        }
+
         $report->delete();
 
         return redirect()->back()->with('success', 'Laporan kegiatan berhasil dihapus');

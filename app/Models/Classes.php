@@ -21,6 +21,6 @@ class Classes extends Model
 
     public function homeroomTeacher()
     {
-        return $this->belongsTo(Teacher::class, 'homeroom');
+        return $this->belongsTo(User::class, 'homeroom');
     }
 }

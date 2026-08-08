@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classes;
-use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +20,7 @@ class ClassController extends Controller
         ->paginate(10)
         ->withQueryString();
 
-        $teachers = Teacher::orderBy('name', 'asc')->get();
+        $teachers = User::orderBy('name', 'asc')->get();
 
         return view('classes.index', compact('classes', 'teachers', 'search'));
     }
@@ -29,7 +29,7 @@ class ClassController extends Controller
     {
         $request->validate([
             'code'     => 'required|string|max:100|unique:classes,code',
-            'homeroom' => 'required|exists:teachers,id',
+            'homeroom' => 'required|exists:users,id',
             'school'   => 'required|in:Unggulan,Reguler',
         ], [
             'code.required'     => 'Kode/Nama kelas wajib diisi',
@@ -54,7 +54,7 @@ class ClassController extends Controller
 
         $request->validate([
             'code'     => 'required|string|max:100|unique:classes,code,' . $id,
-            'homeroom' => 'required|exists:teachers,id',
+            'homeroom' => 'required|exists:users,id',
             'school'   => 'required|in:Unggulan,Reguler',
         ], [
             'code.required'     => 'Kode/Nama kelas wajib diisi',

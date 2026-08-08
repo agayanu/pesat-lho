@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PositionController;
-use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TeachingModuleController;
+use App\Http\Controllers\WaliKelasController;
 use App\Http\Controllers\PiketModuleController;
 use App\Http\Controllers\SpecialActivityController;
 use App\Http\Controllers\PhModuleController;
@@ -26,7 +26,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Master Data Routes
     Route::resource('positions', PositionController::class)->except(['create', 'edit', 'show']);
-    Route::resource('teachers', TeacherController::class)->except(['create', 'edit', 'show']);
     Route::resource('classes', ClassController::class)->except(['create', 'edit', 'show']);
     Route::resource('students', StudentController::class)->except(['create', 'edit', 'show']);
     Route::resource('users', UserController::class)->except(['create', 'edit', 'show']);
@@ -35,6 +34,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('teaching', [TeachingModuleController::class, 'index'])->name('teaching.index');
     Route::post('teaching', [TeachingModuleController::class, 'store'])->name('teaching.store');
     Route::get('teaching/history', [TeachingModuleController::class, 'history'])->name('teaching.history');
+
+    // Modul Wali Kelas (Monitoring Kelas Binaan - ReadOnly)
+    Route::get('walikelas/dashboard', [WaliKelasController::class, 'index'])->name('walikelas.dashboard');
 
     // Modul Guru Piket
     Route::get('piket/dashboard', [PiketModuleController::class, 'index'])->name('piket.dashboard');
