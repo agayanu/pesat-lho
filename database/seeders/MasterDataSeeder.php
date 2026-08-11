@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -13,30 +14,137 @@ class MasterDataSeeder extends Seeder
      */
     public function run(): void
     {
-        $now = now();
         $positions = [
-            ['name' => 'Administrator','created_at' => $now],
-            ['name' => 'Guru Kelas / Pengajar','created_at' => $now],
-            ['name' => 'Wali Kelas','created_at' => $now],
-            ['name' => 'Guru Piket','created_at' => $now],
-            ['name' => 'Penanggung Jawab Kegiatan','created_at' => $now],
-            ['name' => 'PH (Penanggung Jawab Harian)','created_at' => $now],
-            ['name' => 'Kepala Departemen','created_at' => $now],
-            ['name' => 'Kepala Sekolah','created_at' => $now],
+            'Administrator',
+            'Guru Kelas / Pengajar',
+            'Wali Kelas',
+            'Guru Piket',
+            'Penanggung Jawab Kegiatan',
+            'PH (Penanggung Jawab Harian)',
+            'Kepala Departemen',
+            'Kepala Sekolah',
         ];
-        DB::table('positions')->insert($positions);
 
-        // Default Users per Role
+        $posMap = [];
+        foreach ($positions as $posName) {
+            $existing = DB::table('positions')->where('name', $posName)->first();
+            if (!$existing) {
+                $id = DB::table('positions')->insertGetId([
+                    'name'       => $posName,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $posMap[$posName] = $id;
+            } else {
+                $posMap[$posName] = $existing->id;
+            }
+        }
+
+        // Default Users with Single or Multiple Positions
         $defaultUsers = [
-            ['name' => 'Administrator Utama','username' => 'admin', 'password' => Hash::make('admin123'), 'gender' => 'L', 'position' => 1,'user' => 'system', 'created_at' => $now],
-            ['name' => 'Guru Pengajar Test', 'username' => 'guru', 'password' => Hash::make('guru123'), 'gender' => 'L', 'position' => 2, 'user' => 'system', 'created_at' => $now],
-            ['name' => 'Guru Wali Kelas X IPA 1', 'username' => 'walikelas', 'password' => Hash::make('walikelas123'), 'gender' => 'P', 'position' => 3, 'user' => 'system', 'created_at' => $now],
-            ['name' => 'Guru Piket Sekolah', 'username' => 'piket', 'password' => Hash::make('piket123'), 'gender' => 'P', 'position' => 4, 'user' => 'system', 'created_at' => $now],
-            ['name' => 'Penanggung Jawab BBQ/Dhuha', 'username' => 'pj_kegiatan', 'password' => Hash::make('pj123'), 'gender' => 'L', 'position' => 5, 'user' => 'system', 'created_at' => $now],
-            ['name' => 'Bapak PH Harian', 'username' => 'ph', 'password' => Hash::make('ph123'), 'gender' => 'L', 'position' => 6, 'user' => 'system', 'created_at' => $now],
-            ['name' => 'Kepala Departemen PESAT', 'username' => 'kadep', 'password' => Hash::make('kadep123'), 'gender' => 'L', 'position' => 7, 'user' => 'system', 'created_at' => $now],
-            ['name' => 'Kepala Sekolah PESAT', 'username' => 'kepsek', 'password' => Hash::make('kepsek123'), 'gender' => 'L', 'position' => 8, 'user' => 'system', 'created_at' => $now],
+            [
+                'name'      => 'Administrator Utama',
+                'username'  => 'admin',
+                'password'  => Hash::make('admin123'),
+                'gender'    => 'L',
+                'position'  => $posMap['Administrator'] ?? 1,
+                'user'      => 'system',
+                'positions' => [$posMap['Administrator']],
+            ],
+            [
+                'name'      => 'Tyo, S.Pd. (Multi-Jabatan)',
+                'username'  => 'tyo',
+                'password'  => Hash::make('tyo123'),
+                'gender'    => 'L',
+                'position'  => $posMap['Guru Kelas / Pengajar'] ?? 2,
+                'user'      => 'system',
+                // Tyo holds 4 positions simultaneously!
+                'positions' => [
+                    $posMap['Guru Kelas / Pengajar'],
+                    $posMap['Wali Kelas'],
+                    $posMap['Penanggung Jawab Kegiatan'],
+                    $posMap['PH (Penanggung Jawab Harian)'],
+                ],
+            ],
+            [
+                'name'      => 'Guru Pengajar Test',
+                'username'  => 'guru',
+                'password'  => Hash::make('guru123'),
+                'gender'    => 'L',
+                'position'  => $posMap['Guru Kelas / Pengajar'] ?? 2,
+                'user'      => 'system',
+                'positions' => [$posMap['Guru Kelas / Pengajar']],
+            ],
+            [
+                'name'      => 'Guru Wali Kelas X IPA 1',
+                'username'  => 'walikelas',
+                'password'  => Hash::make('walikelas123'),
+                'gender'    => 'P',
+                'position'  => $posMap['Wali Kelas'] ?? 3,
+                'user'      => 'system',
+                'positions' => [$posMap['Wali Kelas']],
+            ],
+            [
+                'name'      => 'Guru Piket Sekolah',
+                'username'  => 'piket',
+                'password'  => Hash::make('piket123'),
+                'gender'    => 'P',
+                'position'  => $posMap['Guru Piket'] ?? 4,
+                'user'      => 'system',
+                'positions' => [$posMap['Guru Piket']],
+            ],
+            [
+                'name'      => 'Penanggung Jawab BBQ/Dhuha',
+                'username'  => 'pj_kegiatan',
+                'password'  => Hash::make('pj123'),
+                'gender'    => 'L',
+                'position'  => $posMap['Penanggung Jawab Kegiatan'] ?? 5,
+                'user'      => 'system',
+                'positions' => [$posMap['Penanggung Jawab Kegiatan']],
+            ],
+            [
+                'name'      => 'Bapak PH Harian',
+                'username'  => 'ph',
+                'password'  => Hash::make('ph123'),
+                'gender'    => 'L',
+                'position'  => $posMap['PH (Penanggung Jawab Harian)'] ?? 6,
+                'user'      => 'system',
+                'positions' => [$posMap['PH (Penanggung Jawab Harian)']],
+            ],
+            [
+                'name'      => 'Kepala Departemen PESAT',
+                'username'  => 'kadep',
+                'password'  => Hash::make('kadep123'),
+                'gender'    => 'L',
+                'position'  => $posMap['Kepala Departemen'] ?? 7,
+                'user'      => 'system',
+                'positions' => [$posMap['Kepala Departemen']],
+            ],
+            [
+                'name'      => 'Kepala Sekolah PESAT',
+                'username'  => 'kepsek',
+                'password'  => Hash::make('kepsek123'),
+                'gender'    => 'L',
+                'position'  => $posMap['Kepala Sekolah'] ?? 8,
+                'user'      => 'system',
+                'positions' => [$posMap['Kepala Sekolah']],
+            ],
         ];
-        DB::table('users')->insert($defaultUsers);
+
+        foreach ($defaultUsers as $userData) {
+            $posList = $userData['positions'];
+            unset($userData['positions']);
+
+            $existingUser = User::where('username', $userData['username'])->first();
+            if (!$existingUser) {
+                $newUser = User::create(array_merge($userData, [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]));
+                $newUser->positions()->sync($posList);
+            } else {
+                $existingUser->positions()->sync($posList);
+            }
+        }
     }
 }

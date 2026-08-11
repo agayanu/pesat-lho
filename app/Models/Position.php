@@ -14,4 +14,9 @@ class Position extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'position_user', 'position_id', 'user_id');
+    }
 }
