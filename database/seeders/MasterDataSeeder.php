@@ -13,107 +13,30 @@ class MasterDataSeeder extends Seeder
      */
     public function run(): void
     {
+        $now = now();
         $positions = [
-            'Administrator',
-            'Guru Kelas / Pengajar',
-            'Wali Kelas',
-            'Guru Piket',
-            'Penanggung Jawab Kegiatan',
-            'PH (Penanggung Jawab Harian)',
-            'Kepala Departemen',
-            'Kepala Sekolah',
+            ['name' => 'Administrator','created_at' => $now],
+            ['name' => 'Guru Kelas / Pengajar','created_at' => $now],
+            ['name' => 'Wali Kelas','created_at' => $now],
+            ['name' => 'Guru Piket','created_at' => $now],
+            ['name' => 'Penanggung Jawab Kegiatan','created_at' => $now],
+            ['name' => 'PH (Penanggung Jawab Harian)','created_at' => $now],
+            ['name' => 'Kepala Departemen','created_at' => $now],
+            ['name' => 'Kepala Sekolah','created_at' => $now],
         ];
-
-        $posMap = [];
-        foreach ($positions as $posName) {
-            $existing = DB::table('positions')->where('name', $posName)->first();
-            if (!$existing) {
-                $id = DB::table('positions')->insertGetId([
-                    'name'       => $posName,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-                $posMap[$posName] = $id;
-            } else {
-                $posMap[$posName] = $existing->id;
-            }
-        }
+        DB::table('positions')->insert($positions);
 
         // Default Users per Role
         $defaultUsers = [
-            [
-                'name'     => 'Administrator Utama',
-                'username' => 'admin',
-                'password' => Hash::make('admin123'),
-                'gender'   => 'L',
-                'position' => $posMap['Administrator'] ?? 1,
-                'user'     => 'system',
-            ],
-            [
-                'name'     => 'Guru Pengajar Test',
-                'username' => 'guru',
-                'password' => Hash::make('guru123'),
-                'gender'   => 'L',
-                'position' => $posMap['Guru Kelas / Pengajar'] ?? 2,
-                'user'     => 'system',
-            ],
-            [
-                'name'     => 'Guru Wali Kelas X IPA 1',
-                'username' => 'walikelas',
-                'password' => Hash::make('walikelas123'),
-                'gender'   => 'P',
-                'position' => $posMap['Wali Kelas'] ?? 3,
-                'user'     => 'system',
-            ],
-            [
-                'name'     => 'Guru Piket Sekolah',
-                'username' => 'piket',
-                'password' => Hash::make('piket123'),
-                'gender'   => 'P',
-                'position' => $posMap['Guru Piket'] ?? 4,
-                'user'     => 'system',
-            ],
-            [
-                'name'     => 'Penanggung Jawab BBQ/Dhuha',
-                'username' => 'pj_kegiatan',
-                'password' => Hash::make('pj123'),
-                'gender'   => 'L',
-                'position' => $posMap['Penanggung Jawab Kegiatan'] ?? 5,
-                'user'     => 'system',
-            ],
-            [
-                'name'     => 'Bapak PH Harian',
-                'username' => 'ph',
-                'password' => Hash::make('ph123'),
-                'gender'   => 'L',
-                'position' => $posMap['PH (Penanggung Jawab Harian)'] ?? 6,
-                'user'     => 'system',
-            ],
-            [
-                'name'     => 'Kepala Departemen PESAT',
-                'username' => 'kadep',
-                'password' => Hash::make('kadep123'),
-                'gender'   => 'L',
-                'position' => $posMap['Kepala Departemen'] ?? 7,
-                'user'     => 'system',
-            ],
-            [
-                'name'     => 'Kepala Sekolah PESAT',
-                'username' => 'kepsek',
-                'password' => Hash::make('kepsek123'),
-                'gender'   => 'L',
-                'position' => $posMap['Kepala Sekolah'] ?? 8,
-                'user'     => 'system',
-            ],
+            ['name' => 'Administrator Utama','username' => 'admin', 'password' => Hash::make('admin123'), 'gender' => 'L', 'position' => 1,'user' => 'system', 'created_at' => $now],
+            ['name' => 'Guru Pengajar Test', 'username' => 'guru', 'password' => Hash::make('guru123'), 'gender' => 'L', 'position' => 2, 'user' => 'system', 'created_at' => $now],
+            ['name' => 'Guru Wali Kelas X IPA 1', 'username' => 'walikelas', 'password' => Hash::make('walikelas123'), 'gender' => 'P', 'position' => 3, 'user' => 'system', 'created_at' => $now],
+            ['name' => 'Guru Piket Sekolah', 'username' => 'piket', 'password' => Hash::make('piket123'), 'gender' => 'P', 'position' => 4, 'user' => 'system', 'created_at' => $now],
+            ['name' => 'Penanggung Jawab BBQ/Dhuha', 'username' => 'pj_kegiatan', 'password' => Hash::make('pj123'), 'gender' => 'L', 'position' => 5, 'user' => 'system', 'created_at' => $now],
+            ['name' => 'Bapak PH Harian', 'username' => 'ph', 'password' => Hash::make('ph123'), 'gender' => 'L', 'position' => 6, 'user' => 'system', 'created_at' => $now],
+            ['name' => 'Kepala Departemen PESAT', 'username' => 'kadep', 'password' => Hash::make('kadep123'), 'gender' => 'L', 'position' => 7, 'user' => 'system', 'created_at' => $now],
+            ['name' => 'Kepala Sekolah PESAT', 'username' => 'kepsek', 'password' => Hash::make('kepsek123'), 'gender' => 'L', 'position' => 8, 'user' => 'system', 'created_at' => $now],
         ];
-
-        foreach ($defaultUsers as $userData) {
-            if (DB::table('users')->where('username', $userData['username'])->count() == 0) {
-                DB::table('users')->insert(array_merge($userData, [
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]));
-            }
-        }
+        DB::table('users')->insert($defaultUsers);
     }
 }

@@ -16,13 +16,16 @@ class DailyLhoReport extends Model
         'ph_user',
         'ph_notes',
         'ph_file',
+        'ph_handwriting_img',
         'kadep_user',
         'kadep_global_notes',
         'kadep_ph_notes',
         'kadep_file',
+        'kadep_handwriting_img',
         'kepsek_user',
         'kepsek_notes',
         'kepsek_file',
+        'kepsek_handwriting_img',
         'status',
     ];
 }

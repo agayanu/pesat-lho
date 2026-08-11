@@ -69,8 +69,27 @@ class KadepModuleController extends Controller
             $data['kadep_file'] = 'uploads/lho_files/' . $filename;
         }
 
+        // Handle Base64 Canvas Handwriting Drawing
+        if (!empty($request->kadep_handwriting_data)) {
+            $imgData = $request->kadep_handwriting_data;
+            if (preg_match('/^data:image\/(\w+);base64,/', $imgData, $type)) {
+                $imgData = substr($imgData, strpos($imgData, ',') + 1);
+                $type = strtolower($type[1]);
+                $imgData = base64_decode($imgData);
+                if ($imgData !== false) {
+                    $filename = 'KADEP_HW_' . $date . '_' . time() . '.' . $type;
+                    $dir = public_path('uploads/handwritings');
+                    if (!file_exists($dir)) {
+                        mkdir($dir, 0777, true);
+                    }
+                    file_put_contents($dir . '/' . $filename, $imgData);
+                    $data['kadep_handwriting_img'] = 'uploads/handwritings/' . $filename;
+                }
+            }
+        }
+
         $lhoReport->update($data);
 
-        return redirect()->back()->with('success', 'Catatan pengawasan dan lampiran Kepala Departemen berhasil disimpan!');
+        return redirect()->back()->with('success', 'Catatan pengawasan, lampiran file, dan coretan tulis tangan Kepala Departemen berhasil disimpan!');
     }
 }

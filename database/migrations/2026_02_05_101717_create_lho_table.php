@@ -27,14 +27,21 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
         });
 
+        Schema::create('studentdays', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->integer('teacher'); // References users.id
+            $table->timestamps();
+        });
+
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->string('id_siswa');
             $table->string('name');
             $table->enum('gender', ['L', 'P']);
             $table->string('classes');
-            $table->enum('program', ['Pioneer', 'Unggulan', 'Reguler']);
-            $table->string('studentday')->nullable();
+            $table->enum('program', ['INTERNASIONAL', 'UNGGULAN', 'REGULER']);
+            $table->integer('studentday')->nullable();
             $table->string('user');
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();

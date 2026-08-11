@@ -17,13 +17,11 @@ class PhModuleController extends Controller
     {
         $date = $request->query('date', date('Y-m-d'));
 
-        // Load or create Daily LHO Report record for selected date
         $lhoReport = DailyLhoReport::firstOrCreate(
             ['date' => $date],
             ['status' => 'Open']
         );
 
-        // Fetch all operational data for selected date
         $teachingJournals = TeachingJournal::where('date', $date)->orderBy('jam_ke', 'asc')->get();
         $studentAbsences  = StudentAbsence::with('student')->where('date', $date)->orderBy('class_code', 'asc')->get();
         $teacherAbsences  = TeacherAbsence::where('date', $date)->orderBy('id', 'desc')->get();
@@ -46,7 +44,7 @@ class PhModuleController extends Controller
         $request->validate([
             'date'     => 'required|date',
             'ph_notes' => 'required|string',
-            'ph_file'  => 'nullable|file|mimes:pdf,docx,doc,txt|max:5120', // max 5MB
+            'ph_file'  => 'nullable|file|mimes:pdf,docx,doc,txt|max:5120',
         ], [
             'ph_notes.required' => 'Catatan pengawasan global PH wajib diisi',
             'ph_file.mimes'     => 'Format file lampiran harus berupa .pdf, .docx, .doc, atau .txt',
@@ -70,8 +68,27 @@ class PhModuleController extends Controller
             $data['ph_file'] = 'uploads/lho_files/' . $filename;
         }
 
+        // Handle Base64 Canvas Handwriting Drawing
+        if (!empty($request->ph_handwriting_data)) {
+            $imgData = $request->ph_handwriting_data;
+            if (preg_match('/^data:image\/(\w+);base64,/', $imgData, $type)) {
+                $imgData = substr($imgData, strpos($imgData, ',') + 1);
+                $type = strtolower($type[1]);
+                $imgData = base64_decode($imgData);
+                if ($imgData !== false) {
+                    $filename = 'PH_HW_' . $date . '_' . time() . '.' . $type;
+                    $dir = public_path('uploads/handwritings');
+                    if (!file_exists($dir)) {
+                        mkdir($dir, 0777, true);
+                    }
+                    file_put_contents($dir . '/' . $filename, $imgData);
+                    $data['ph_handwriting_img'] = 'uploads/handwritings/' . $filename;
+                }
+            }
+        }
+
         $lhoReport->update($data);
 
-        return redirect()->back()->with('success', 'Catatan pengawasan global dan lampiran PH berhasil disimpan!');
+        return redirect()->back()->with('success', 'Catatan pengawasan, lampiran file, dan coretan tulis tangan PH berhasil disimpan!');
     }
 }

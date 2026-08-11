@@ -257,22 +257,28 @@
         </tbody>
     </table>
 
-    <!-- 6. Catatan Pengawasan Berjenjang -->
-    <div class="section-header">6. Catatan Pengawasan Hirarki Manajemen</div>
+    <!-- 6. Catatan Pengawasan & Coreatan Tulis Tangan Tablet -->
+    <div class="section-header">6. Catatan Pengawasan & Tulis Tangan Stylus Management</div>
     
     <table class="table-print">
         <tr>
             <th style="width: 25%;">Peran</th>
             <th style="width: 25%;">Nama Penanggung Jawab</th>
-            <th>Catatan Pengawasan / Arahan Global</th>
+            <th>Catatan Pengawasan Teks & Coretan Tulis Tangan (Tablet Stylus)</th>
         </tr>
         <tr>
             <td><strong>1. Penanggung Jawab Harian (PH)</strong></td>
             <td>{{ $lhoReport->ph_user ?? '-' }}</td>
             <td>
-                {{ $lhoReport->ph_notes ?? 'Belum mengisi catatan.' }}
+                <div>{{ $lhoReport->ph_notes ?? 'Belum mengisi catatan.' }}</div>
+                @if($lhoReport->ph_handwriting_img)
+                    <div class="mt-2">
+                        <small class="d-block text-muted">Catatan Tulis Tangan Tablet PH:</small>
+                        <img src="{{ asset($lhoReport->ph_handwriting_img) }}" style="max-height: 120px; border: 1px solid #ccc; padding: 2px; border-radius: 4px;" alt="Tulis Tangan PH">
+                    </div>
+                @endif
                 @if($lhoReport->ph_file)
-                    <br><small><em>(Melampirkan File: {{ basename($lhoReport->ph_file) }})</em></small>
+                    <div class="mt-1"><small><em>(Melampirkan File: {{ basename($lhoReport->ph_file) }})</em></small></div>
                 @endif
             </td>
         </tr>
@@ -280,9 +286,15 @@
             <td><strong>2. Kepala Departemen</strong></td>
             <td>{{ $lhoReport->kadep_user ?? '-' }}</td>
             <td>
-                {{ $lhoReport->kadep_global_notes ?? 'Belum mengisi catatan.' }}
+                <div>{{ $lhoReport->kadep_global_notes ?? 'Belum mengisi catatan.' }}</div>
+                @if($lhoReport->kadep_handwriting_img)
+                    <div class="mt-2">
+                        <small class="d-block text-muted">Catatan Tulis Tangan Tablet Kadep:</small>
+                        <img src="{{ asset($lhoReport->kadep_handwriting_img) }}" style="max-height: 120px; border: 1px solid #ccc; padding: 2px; border-radius: 4px;" alt="Tulis Tangan Kadep">
+                    </div>
+                @endif
                 @if($lhoReport->kadep_file)
-                    <br><small><em>(Melampirkan File: {{ basename($lhoReport->kadep_file) }})</em></small>
+                    <div class="mt-1"><small><em>(Melampirkan File: {{ basename($lhoReport->kadep_file) }})</em></small></div>
                 @endif
             </td>
         </tr>
@@ -290,9 +302,15 @@
             <td><strong>3. Kepala Sekolah</strong></td>
             <td>{{ $lhoReport->kepsek_user ?? '-' }}</td>
             <td>
-                {{ $lhoReport->kepsek_notes ?? 'Belum mengisi catatan.' }}
+                <div>{{ $lhoReport->kepsek_notes ?? 'Belum mengisi catatan.' }}</div>
+                @if($lhoReport->kepsek_handwriting_img)
+                    <div class="mt-2">
+                        <small class="d-block text-muted">Catatan Tulis Tangan Tablet Kepsek:</small>
+                        <img src="{{ asset($lhoReport->kepsek_handwriting_img) }}" style="max-height: 120px; border: 1px solid #ccc; padding: 2px; border-radius: 4px;" alt="Tulis Tangan Kepsek">
+                    </div>
+                @endif
                 @if($lhoReport->kepsek_file)
-                    <br><small><em>(Melampirkan File: {{ basename($lhoReport->kepsek_file) }})</em></small>
+                    <div class="mt-1"><small><em>(Melampirkan File: {{ basename($lhoReport->kepsek_file) }})</em></small></div>
                 @endif
             </td>
         </tr>

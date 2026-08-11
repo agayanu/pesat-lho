@@ -57,6 +57,11 @@
                     <h5 class="card-title text-info mb-1">Arahan / Catatan dari Kepala Sekolah</h5>
                     <p class="mb-1 text-dark">{{ $lhoReport->kepsek_notes }}</p>
                     <small class="text-muted">Oleh: {{ $lhoReport->kepsek_user ?? 'Kepala Sekolah' }}</small>
+                    @if($lhoReport->kepsek_handwriting_img)
+                        <div class="mt-2">
+                            <img src="{{ asset($lhoReport->kepsek_handwriting_img) }}" class="img-fluid border rounded" style="max-height: 120px;" alt="Tulis Tangan Kepsek">
+                        </div>
+                    @endif
                     @if($lhoReport->kepsek_file)
                         <div class="mt-2">
                             <a href="{{ asset($lhoReport->kepsek_file) }}" target="_blank" class="btn btn-sm btn-outline-info">
@@ -77,6 +82,11 @@
             <h5 class="card-title text-primary mb-1"><i class="material-icons-outlined align-middle me-1">fact_check</i> Catatan Pengawasan Global PH</h5>
             <p class="mb-1 text-dark">{{ $lhoReport->ph_notes }}</p>
             <small class="text-muted">Petugas PH: {{ $lhoReport->ph_user ?? '-' }}</small>
+            @if($lhoReport->ph_handwriting_img)
+                <div class="mt-2">
+                    <img src="{{ asset($lhoReport->ph_handwriting_img) }}" class="img-fluid border rounded" style="max-height: 120px;" alt="Tulis Tangan PH">
+                </div>
+            @endif
             @if($lhoReport->ph_file)
                 <div class="mt-2">
                     <a href="{{ asset($lhoReport->ph_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -88,15 +98,16 @@
     </div>
 @endif
 
-<!-- Form Catatan Kadep -->
+<!-- Form Catatan & Canvas Kadep -->
 <div class="card mb-4">
     <div class="card-header bg-dark text-white">
-        <h5 class="mb-0 text-white"><i class="material-icons-outlined align-middle me-2">supervisor_account</i> Form Catatan & Lampiran Kepala Departemen</h5>
+        <h5 class="mb-0 text-white"><i class="material-icons-outlined align-middle me-2">supervisor_account</i> Form Catatan, Tulis Tangan, & Lampiran Kepala Departemen</h5>
     </div>
     <div class="card-body">
-        <form action="{{ route('kadep.notes.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('kadep.notes.store') }}" method="POST" enctype="multipart/form-data" id="kadepForm">
             @csrf
             <input type="hidden" name="date" value="{{ $date }}">
+            <input type="hidden" name="kadep_handwriting_data" id="kadepHandwritingData">
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Catatan Pengawasan Global Kepala Departemen <span class="text-danger">*</span></label>
@@ -106,6 +117,43 @@
             <div class="mb-3">
                 <label class="form-label fw-bold">Catatan Khusus untuk PH (Penanggung Jawab Harian)</label>
                 <textarea name="kadep_ph_notes" class="form-control" rows="2" placeholder="Tuliskan instruksi / umpan balik khusus yang dapat dibaca langsung oleh PH...">{{ old('kadep_ph_notes', $lhoReport->kadep_ph_notes) }}</textarea>
+            </div>
+
+            <!-- Canvas Tulis Tangan Kadep -->
+            <div class="mb-4">
+                <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+                    <span><i class="material-icons-outlined align-middle text-primary me-1">draw</i> Canvas Catatan Tulis Tangan (Tablet / Stylus Kadep)</span>
+                    <small class="text-muted">Tulis catatan tangan atau tanda tangan langsung di canvas ini</small>
+                </label>
+                
+                <div class="p-3 border rounded bg-light">
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="fw-bold fs-7">Warna:</span>
+                        <button type="button" class="btn btn-sm btn-dark px-3 py-1" onclick="setPenColor('#000000')">Hitam</button>
+                        <button type="button" class="btn btn-sm btn-primary px-3 py-1" onclick="setPenColor('#0d6efd')">Biru</button>
+                        <button type="button" class="btn btn-sm btn-danger px-3 py-1" onclick="setPenColor('#dc3545')">Merah</button>
+                        
+                        <span class="ms-3 fw-bold fs-7">Ketebalan:</span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" onclick="setLineWidth(2)">Tipis</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" onclick="setLineWidth(4)">Sedang</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" onclick="setLineWidth(8)">Tebal</button>
+
+                        <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="clearCanvas()">
+                            <i class="material-icons-outlined align-middle fs-6">delete_sweep</i> Bersihkan Canvas
+                        </button>
+                    </div>
+
+                    <div class="position-relative border rounded bg-white" style="touch-action: none;">
+                        <canvas id="handwritingCanvas" width="900" height="250" class="w-100 style-canvas"></canvas>
+                    </div>
+
+                    @if($lhoReport->kadep_handwriting_img)
+                        <div class="mt-3 p-2 bg-white border rounded">
+                            <small class="fw-bold d-block text-success mb-1"><i class="material-icons-outlined align-middle me-1">check_circle</i> Catatan Tulis Tangan Kadep Tersimpan:</small>
+                            <img src="{{ asset($lhoReport->kadep_handwriting_img) }}" class="img-fluid border rounded" style="max-height: 180px;" alt="Tulis Tangan Kadep">
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <div class="row g-3 align-items-center">
@@ -127,7 +175,7 @@
             </div>
 
             <div class="mt-4 text-end">
-                <button type="submit" class="btn btn-success btn-lg px-4">
+                <button type="submit" class="btn btn-success btn-lg px-4" onclick="prepareSubmit()">
                     <i class="material-icons-outlined align-middle">send</i> Simpan Catatan & Lampiran Kadep
                 </button>
             </div>
@@ -247,4 +295,92 @@
         </div>
     </div>
 </div>
+
+@section('scripts')
+<script>
+    let canvas = document.getElementById('handwritingCanvas');
+    let ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let currentColor = '#000000';
+    let currentWidth = 3;
+    let isCanvasBlank = true;
+
+    function resizeCanvas() {
+        let rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = 250;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = currentWidth;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    setTimeout(resizeCanvas, 300);
+
+    function setPenColor(color) {
+        currentColor = color;
+        ctx.strokeStyle = currentColor;
+    }
+
+    function setLineWidth(width) {
+        currentWidth = width;
+        ctx.lineWidth = currentWidth;
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        isCanvasBlank = true;
+    }
+
+    function getPos(e) {
+        let rect = canvas.getBoundingClientRect();
+        let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: clientX - rect.left,
+            y: clientY - rect.top
+        };
+    }
+
+    function startDrawing(e) {
+        isDrawing = true;
+        isCanvasBlank = false;
+        let pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        let pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+
+    function stopDrawing() {
+        if (isDrawing) {
+            ctx.closePath();
+            isDrawing = false;
+        }
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+
+    canvas.addEventListener('touchstart', startDrawing, {passive: false});
+    canvas.addEventListener('touchmove', draw, {passive: false});
+    canvas.addEventListener('touchend', stopDrawing);
+
+    function prepareSubmit() {
+        if (!isCanvasBlank) {
+            let dataURL = canvas.toDataURL('image/png');
+            document.getElementById('kadepHandwritingData').value = dataURL;
+        }
+    }
+</script>
+@endsection
 @endsection

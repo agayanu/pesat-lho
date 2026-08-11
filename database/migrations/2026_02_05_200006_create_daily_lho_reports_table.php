@@ -17,13 +17,16 @@ return new class extends Migration
             $table->string('ph_user')->nullable();
             $table->text('ph_notes')->nullable();
             $table->string('ph_file')->nullable();
+            $table->string('ph_handwriting_img')->nullable();
             $table->string('kadep_user')->nullable();
             $table->text('kadep_global_notes')->nullable();
             $table->text('kadep_ph_notes')->nullable();
             $table->string('kadep_file')->nullable();
+            $table->string('kadep_handwriting_img')->nullable();
             $table->string('kepsek_user')->nullable();
             $table->text('kepsek_notes')->nullable();
             $table->string('kepsek_file')->nullable();
+            $table->string('kepsek_handwriting_img')->nullable();
             $table->string('status')->default('Open');
             $table->timestamps();
         });

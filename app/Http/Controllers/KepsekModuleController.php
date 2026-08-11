@@ -67,8 +67,27 @@ class KepsekModuleController extends Controller
             $data['kepsek_file'] = 'uploads/lho_files/' . $filename;
         }
 
+        // Handle Base64 Canvas Handwriting Drawing
+        if (!empty($request->kepsek_handwriting_data)) {
+            $imgData = $request->kepsek_handwriting_data;
+            if (preg_match('/^data:image\/(\w+);base64,/', $imgData, $type)) {
+                $imgData = substr($imgData, strpos($imgData, ',') + 1);
+                $type = strtolower($type[1]);
+                $imgData = base64_decode($imgData);
+                if ($imgData !== false) {
+                    $filename = 'KEPSEK_HW_' . $date . '_' . time() . '.' . $type;
+                    $dir = public_path('uploads/handwritings');
+                    if (!file_exists($dir)) {
+                        mkdir($dir, 0777, true);
+                    }
+                    file_put_contents($dir . '/' . $filename, $imgData);
+                    $data['kepsek_handwriting_img'] = 'uploads/handwritings/' . $filename;
+                }
+            }
+        }
+
         $lhoReport->update($data);
 
-        return redirect()->back()->with('success', 'Catatan arahan dan lampiran Kepala Sekolah berhasil disimpan!');
+        return redirect()->back()->with('success', 'Catatan arahan, lampiran file, dan coretan tulis tangan Kepala Sekolah berhasil disimpan!');
     }
 }

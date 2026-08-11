@@ -64,26 +64,66 @@
     </div>
 @endif
 
-<!-- Form Catatan Global & File Upload PH -->
+<!-- Form Catatan Global, Canvas Tulis Tangan, & File Upload PH -->
 <div class="card mb-4">
     <div class="card-header bg-primary text-white">
-        <h5 class="mb-0 text-white"><i class="material-icons-outlined align-middle me-2">rate_review</i> Form Catatan Pengawasan Global & Lampiran File PH</h5>
+        <h5 class="mb-0 text-white"><i class="material-icons-outlined align-middle me-2">rate_review</i> Form Catatan Pengawasan, Tulis Tangan, & Lampiran File PH</h5>
     </div>
     <div class="card-body">
-        <form action="{{ route('ph.notes.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('ph.notes.store') }}" method="POST" enctype="multipart/form-data" id="phForm">
             @csrf
             <input type="hidden" name="date" value="{{ $date }}">
+            <input type="hidden" name="ph_handwriting_data" id="phHandwritingData">
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Catatan Pengawasan Global PH (Tanggal: {{ \Carbon\Carbon::parse($date)->translatedFormat('d F Y') }}) <span class="text-danger">*</span></label>
-                <textarea name="ph_notes" class="form-control" rows="4" placeholder="Tuliskan evaluasi & catatan umum pengawasan seluruh kegiatan sekolah hari ini..." required>{{ old('ph_notes', $lhoReport->ph_notes) }}</textarea>
+                <label class="form-label fw-bold">Catatan Teks Pengawasan Global PH (Tanggal: {{ \Carbon\Carbon::parse($date)->translatedFormat('d F Y') }}) <span class="text-danger">*</span></label>
+                <textarea name="ph_notes" class="form-control" rows="3" placeholder="Tuliskan evaluasi & catatan umum pengawasan seluruh kegiatan sekolah hari ini..." required>{{ old('ph_notes', $lhoReport->ph_notes) }}</textarea>
             </div>
 
+            <!-- Canvas Tulis Tangan (Tablet / Touch Pen) -->
+            <div class="mb-4">
+                <label class="form-label fw-bold d-flex align-items-center justify-content-between">
+                    <span><i class="material-icons-outlined align-middle text-primary me-1">draw</i> Canvas Catatan Tulis Tangan (Tablet / Touch Screen)</span>
+                    <small class="text-muted">Gunakan Stylus / Touchscreen Tablet untuk menggambar atau menulis catatan</small>
+                </label>
+                
+                <div class="p-3 border rounded bg-light">
+                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <span class="fw-bold fs-7">Warna:</span>
+                        <button type="button" class="btn btn-sm btn-dark px-3 py-1" onclick="setPenColor('#000000')">Hitam</button>
+                        <button type="button" class="btn btn-sm btn-primary px-3 py-1" onclick="setPenColor('#0d6efd')">Biru</button>
+                        <button type="button" class="btn btn-sm btn-danger px-3 py-1" onclick="setPenColor('#dc3545')">Merah</button>
+                        
+                        <span class="ms-3 fw-bold fs-7">Ketebalan:</span>
+                        <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" onclick="setLineWidth(2)">Tipis</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" onclick="setLineWidth(4)">Sedang</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" onclick="setLineWidth(8)">Tebal</button>
+
+                        <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="clearCanvas()">
+                            <i class="material-icons-outlined align-middle fs-6">delete_sweep</i> Bersihkan Canvas
+                        </button>
+                    </div>
+
+                    <div class="position-relative border rounded bg-white" style="touch-action: none;">
+                        <canvas id="handwritingCanvas" width="900" height="250" class="w-100 style-canvas"></canvas>
+                    </div>
+                    <small class="text-muted d-block mt-1">* Catatan coretan tangan di atas akan otomatis disimpan dan disertakan dalam Dokumen LHO Cetak.</small>
+
+                    @if($lhoReport->ph_handwriting_img)
+                        <div class="mt-3 p-2 bg-white border rounded">
+                            <small class="fw-bold d-block text-success mb-1"><i class="material-icons-outlined align-middle me-1">check_circle</i> Catatan Tulis Tangan PH yang Tersimpan:</small>
+                            <img src="{{ asset($lhoReport->ph_handwriting_img) }}" class="img-fluid border rounded" style="max-height: 180px;" alt="Tulis Tangan PH">
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
             <div class="row g-3 align-items-center">
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Upload File Lampiran Pendukung (Opsional)</label>
                     <input type="file" name="ph_file" class="form-control" accept=".pdf,.docx,.doc,.txt">
-                    <small class="text-muted">Format yang didukung: .pdf, .docx, .doc, .txt (Maksimal 5MB)</small>
+                    <small class="text-muted">Format: .pdf, .docx, .doc, .txt (Maks 5MB)</small>
                 </div>
                 <div class="col-md-6">
                     @if($lhoReport->ph_file)
@@ -98,7 +138,7 @@
             </div>
 
             <div class="mt-4 text-end">
-                <button type="submit" class="btn btn-success btn-lg px-4">
+                <button type="submit" class="btn btn-success btn-lg px-4" onclick="prepareSubmit()">
                     <i class="material-icons-outlined align-middle">send</i> Simpan Laporan & Catatan PH
                 </button>
             </div>
@@ -205,7 +245,7 @@
                                             <span class="badge bg-success">Dikoreksi Piket ({{ $abs->piket_user }})</span>
                                             <br><small class="text-muted">Ket: {{ $abs->edit_reason }}</small>
                                         @else
-                                            <small class="text-muted">Guru Kelas: {{ $abs->user }}</small>
+                                            <small class="text-muted">Guru Pengajar: {{ $abs->user }}</small>
                                         @endif
                                     </td>
                                 </tr>
@@ -321,4 +361,94 @@
         </div>
     </div>
 </div>
+
+@section('scripts')
+<script>
+    let canvas = document.getElementById('handwritingCanvas');
+    let ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let currentColor = '#000000';
+    let currentWidth = 3;
+    let isCanvasBlank = true;
+
+    // Responsive Canvas
+    function resizeCanvas() {
+        let rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = 250;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = currentWidth;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    setTimeout(resizeCanvas, 300);
+
+    function setPenColor(color) {
+        currentColor = color;
+        ctx.strokeStyle = currentColor;
+    }
+
+    function setLineWidth(width) {
+        currentWidth = width;
+        ctx.lineWidth = currentWidth;
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        isCanvasBlank = true;
+    }
+
+    // Touch & Mouse Drawing Handlers
+    function getPos(e) {
+        let rect = canvas.getBoundingClientRect();
+        let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: clientX - rect.left,
+            y: clientY - rect.top
+        };
+    }
+
+    function startDrawing(e) {
+        isDrawing = true;
+        isCanvasBlank = false;
+        let pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        let pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+
+    function stopDrawing() {
+        if (isDrawing) {
+            ctx.closePath();
+            isDrawing = false;
+        }
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+
+    canvas.addEventListener('touchstart', startDrawing, {passive: false});
+    canvas.addEventListener('touchmove', draw, {passive: false});
+    canvas.addEventListener('touchend', stopDrawing);
+
+    function prepareSubmit() {
+        if (!isCanvasBlank) {
+            let dataURL = canvas.toDataURL('image/png');
+            document.getElementById('phHandwritingData').value = dataURL;
+        }
+    }
+</script>
+@endsection
 @endsection
