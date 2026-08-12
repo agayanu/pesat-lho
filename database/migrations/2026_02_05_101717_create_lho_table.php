@@ -48,14 +48,14 @@ return new class extends Migration
             $table->timestamp('deleted_at')->nullable();
         });
 
-        Schema::create('student_absences', function (Blueprint $table) {
-            $table->id();
-            $table->integer('student');
-            $table->enum('status', ['Hadir', 'Izin', 'Sakit', 'Alpha']);
-            $table->string('user');
-            $table->timestamps();
-            $table->timestamp('deleted_at')->nullable();
-        });
+        // Schema::create('student_absences', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->integer('student');
+        //     $table->enum('status', ['Hadir', 'Izin', 'Sakit', 'Alpha']);
+        //     $table->string('user');
+        //     $table->timestamps();
+        //     $table->timestamp('deleted_at')->nullable();
+        // });
 
         Schema::create('teaching_activities', function (Blueprint $table) {
             $table->id();
@@ -75,7 +75,7 @@ return new class extends Migration
         Schema::dropIfExists('positions');
         Schema::dropIfExists('classes');
         Schema::dropIfExists('students');
-        Schema::dropIfExists('student_absences');
+        // Schema::dropIfExists('student_absences');
         Schema::dropIfExists('teaching_activities');
     }
 };
