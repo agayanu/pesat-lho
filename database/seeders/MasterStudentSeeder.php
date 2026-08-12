@@ -462,7 +462,7 @@ class MasterStudentSeeder extends Seeder
             ['id_siswa' => '20250281', 'name' => 'TRISTAN MUHAMAD SAFRIZAL', 'gender' => 'L', 'classes' => 'XI.I-1', 'program' => 'INTERNASIONAL', 'studentday' => 46, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20250394', 'name' => 'ADELIO FARAND RABBANY', 'gender' => 'L', 'classes' => 'XI.I-2', 'program' => 'INTERNASIONAL', 'studentday' => 39, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20250388', 'name' => 'ALFIAN NUR FADHLI', 'gender' => 'L', 'classes' => 'XI.I-2', 'program' => 'INTERNASIONAL', 'studentday' => 5, 'user' => 'system', 'created_at' => $now],
-            ['id_siswa' => '20250386', 'name' => 'ALMIRA MARITZA WAHYUDI', 'gender' => '', 'classes' => 'XI.I-2', 'program' => 'INTERNASIONAL', 'studentday' => 46, 'user' => 'system', 'created_at' => $now],
+            ['id_siswa' => '20250386', 'name' => 'ALMIRA MARITZA WAHYUDI', 'gender' => 'P', 'classes' => 'XI.I-2', 'program' => 'INTERNASIONAL', 'studentday' => 46, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20250374', 'name' => 'BENAYA REIZEN HETHARIA', 'gender' => 'L', 'classes' => 'XI.I-2', 'program' => 'INTERNASIONAL', 'studentday' => 28, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20250368', 'name' => 'CAESAR IRHAN ARAFFI', 'gender' => 'L', 'classes' => 'XI.I-2', 'program' => 'INTERNASIONAL', 'studentday' => 5, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20250366', 'name' => 'CARISSA FIDELYA AZZAHRA', 'gender' => 'P', 'classes' => 'XI.I-2', 'program' => 'INTERNASIONAL', 'studentday' => 7, 'user' => 'system', 'created_at' => $now],
