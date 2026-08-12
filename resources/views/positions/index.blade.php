@@ -67,7 +67,7 @@
                             <td>{{ $positions->firstItem() + $index }}</td>
                             <td>{{ $pos->name }}</td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $pos->id }}">
+                                <button type="button" class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $pos->id }}">
                                     <i class="material-icons-outlined">edit</i>
                                 </button>
                                 <form action="{{ route('positions.destroy', $pos->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
@@ -79,32 +79,6 @@
                                 </form>
                             </td>
                         </tr>
-
-                        <!-- Modal Edit -->
-                        <div class="modal fade" id="modalEdit{{ $pos->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form action="{{ route('positions.update', $pos->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Edit Jabatan</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label class="form-label">Nama Jabatan</label>
-                                                <input type="text" name="name" class="form-control" value="{{ old('name', $pos->name) }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     @empty
                         <tr>
                             <td colspan="3" class="text-center text-muted">Belum ada data jabatan.</td>
@@ -120,14 +94,42 @@
     </div>
 </div>
 
+<!-- Modal Edit Section (Out of table) -->
+@foreach($positions as $pos)
+    <div class="modal fade" id="modalEdit{{ $pos->id }}" tabindex="-1" aria-labelledby="modalEditLabel{{ $pos->id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('positions.update', $pos->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditLabel{{ $pos->id }}">Edit Jabatan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Jabatan</label>
+                            <input type="text" name="name" class="form-control" value="{{ old('name', $pos->name) }}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endforeach
+
 <!-- Modal Create -->
-<div class="modal fade" id="modalCreate" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="{{ route('positions.store') }}" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Jabatan</h5>
+                    <h5 class="modal-title" id="modalCreateLabel">Tambah Jabatan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

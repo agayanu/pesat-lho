@@ -78,7 +78,7 @@
                             </td>
                             <td><small class="text-muted">{{ $u->user }}</small></td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $u->id }}">
+                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $u->id }}">
                                     <i class="material-icons-outlined">edit</i>
                                 </button>
                                 <form action="{{ route('users.destroy', $u->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
@@ -90,70 +90,6 @@
                                 </form>
                             </td>
                         </tr>
-
-                        <!-- Modal Edit User -->
-                        <div class="modal fade" id="editModal{{ $u->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <form action="{{ route('users.update', $u->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-header bg-warning text-dark">
-                                            <h5 class="modal-title fw-bold">Edit User & Jabatan: {{ $u->name }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-bold">Nama Lengkap <span class="text-danger">*</span></label>
-                                                    <input type="text" name="name" class="form-control" value="{{ old('name', $u->name) }}" required>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-bold">Username Login <span class="text-danger">*</span></label>
-                                                    <input type="text" name="username" class="form-control" value="{{ old('username', $u->username) }}" required>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-bold">Password Baru (Kosongkan jika tidak diubah)</label>
-                                                    <input type="password" name="password" class="form-control" placeholder="••••••••">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="form-label fw-bold">Jenis Kelamin <span class="text-danger">*</span></label>
-                                                    <select name="gender" class="form-select" required>
-                                                        <option value="L" {{ $u->gender == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                                                        <option value="P" {{ $u->gender == 'P' ? 'selected' : '' }}>Perempuan</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <label class="form-label fw-bold d-block">Pilih Jabatan / Posisi (Centang Semua yang Berlaku): <span class="text-danger">*</span></label>
-                                                    <div class="p-3 border rounded bg-light row g-2">
-                                                        @php
-                                                            $userPosIds = $u->positions->pluck('id')->toArray();
-                                                            if (empty($userPosIds) && $u->position) {
-                                                                $userPosIds = [$u->position];
-                                                            }
-                                                        @endphp
-                                                        @foreach($positions as $p)
-                                                            <div class="col-md-6">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox" name="positions[]" value="{{ $p->id }}" id="edit_pos_{{ $u->id }}_{{ $p->id }}" {{ in_array($p->id, $userPosIds) ? 'checked' : '' }}>
-                                                                    <label class="form-check-label fw-bold" for="edit_pos_{{ $u->id }}_{{ $p->id }}">
-                                                                        {{ $p->name }}
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-warning">Simpan Perubahan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     @empty
                         <tr>
                             <td colspan="7" class="text-center text-muted py-4">Belum ada data user.</td>
@@ -168,14 +104,80 @@
     </div>
 </div>
 
+<!-- Modal Modals Edit Section (Rendered outside table for full mobile compatibility) -->
+@foreach($users as $u)
+    <div class="modal fade" id="editModal{{ $u->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $u->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <form action="{{ route('users.update', $u->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title fw-bold" id="editModalLabel{{ $u->id }}">Edit User & Jabatan: {{ $u->name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Nama Lengkap <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" value="{{ old('name', $u->name) }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Username Login <span class="text-danger">*</span></label>
+                                <input type="text" name="username" class="form-control" value="{{ old('username', $u->username) }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Password Baru (Kosongkan jika tidak diubah)</label>
+                                <input type="password" name="password" class="form-control" placeholder="••••••••">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Jenis Kelamin <span class="text-danger">*</span></label>
+                                <select name="gender" class="form-select" required>
+                                    <option value="L" {{ $u->gender == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                    <option value="P" {{ $u->gender == 'P' ? 'selected' : '' }}>Perempuan</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold d-block">Pilih Jabatan / Posisi (Centang Semua yang Berlaku): <span class="text-danger">*</span></label>
+                                <div class="p-3 border rounded bg-light row g-2">
+                                    @php
+                                        $userPosIds = $u->positions->pluck('id')->toArray();
+                                        if (empty($userPosIds) && $u->position) {
+                                            $userPosIds = [$u->position];
+                                        }
+                                    @endphp
+                                    @foreach($positions as $p)
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="positions[]" value="{{ $p->id }}" id="edit_pos_{{ $u->id }}_{{ $p->id }}" {{ in_array($p->id, $userPosIds) ? 'checked' : '' }}>
+                                                <label class="form-check-label fw-bold" for="edit_pos_{{ $u->id }}_{{ $p->id }}">
+                                                    {{ $p->name }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-warning">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endforeach
+
 <!-- Modal Tambah User -->
-<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('users.store') }}" method="POST">
                 @csrf
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold text-white">Tambah User Baru & Pilih Multi-Jabatan</h5>
+                    <h5 class="modal-title fw-bold text-white" id="addModalLabel">Tambah User Baru & Pilih Multi-Jabatan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

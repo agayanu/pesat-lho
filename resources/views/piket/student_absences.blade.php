@@ -100,51 +100,11 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalKoreksi{{ $abs->id }}">
+                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalKoreksi{{ $abs->id }}">
                                     <i class="material-icons-outlined align-middle">edit</i> Edit Status
                                 </button>
                             </td>
                         </tr>
-
-                        <!-- Modal Koreksi Presensi -->
-                        <div class="modal fade" id="modalKoreksi{{ $abs->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form action="{{ route('piket.student-absences.update', $abs->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Koreksi Presensi Siswa (Guru Piket)</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label class="form-label text-muted mb-1">Siswa</label>
-                                                <h6>{{ $abs->student->name ?? '' }} ({{ $abs->class_code }} - Jam ke-{{ $abs->jam_ke }})</h6>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Ubah Status Presensi <span class="text-danger">*</span></label>
-                                                <select name="status" class="form-select" required>
-                                                    <option value="Hadir" {{ $abs->status == 'Hadir' ? 'selected' : '' }}>Hadir (Hapus Catatan Tidak Hadir)</option>
-                                                    <option value="Izin" {{ $abs->status == 'Izin' ? 'selected' : '' }}>Izin</option>
-                                                    <option value="Sakit" {{ $abs->status == 'Sakit' ? 'selected' : '' }}>Sakit</option>
-                                                    <option value="Alpha" {{ $abs->status == 'Alpha' ? 'selected' : '' }}>Alpha</option>
-                                                </select>
-                                                <small class="text-muted d-block mt-1">Jika diubah ke "Hadir", data ketidakhadiran akan dihapus dari sistem.</small>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Alasan Koreksi oleh Guru Piket <span class="text-danger">*</span></label>
-                                                <textarea name="edit_reason" class="form-control" rows="3" placeholder="Contoh: Orang tua mengonfirmasi surat sakit jam 09:00" required>{{ old('edit_reason', $abs->edit_reason) }}</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-primary">Simpan Perubahan Status</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     @empty
                         <tr>
                             <td colspan="9" class="text-center text-muted py-4">Tidak ada catatan ketidakhadiran siswa pada tanggal ini.</td>
@@ -159,4 +119,46 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Koreksi Presensi Section (Out of table for full mobile compatibility) -->
+@foreach($absences as $abs)
+    <div class="modal fade" id="modalKoreksi{{ $abs->id }}" tabindex="-1" aria-labelledby="modalKoreksiLabel{{ $abs->id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('piket.student-absences.update', $abs->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalKoreksiLabel{{ $abs->id }}">Koreksi Presensi Siswa (Guru Piket)</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label text-muted mb-1">Siswa</label>
+                            <h6>{{ $abs->student->name ?? '' }} ({{ $abs->class_code }} - Jam ke-{{ $abs->jam_ke }})</h6>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ubah Status Presensi <span class="text-danger">*</span></label>
+                            <select name="status" class="form-select" required>
+                                <option value="Hadir" {{ $abs->status == 'Hadir' ? 'selected' : '' }}>Hadir (Hapus Catatan Tidak Hadir)</option>
+                                <option value="Izin" {{ $abs->status == 'Izin' ? 'selected' : '' }}>Izin</option>
+                                <option value="Sakit" {{ $abs->status == 'Sakit' ? 'selected' : '' }}>Sakit</option>
+                                <option value="Alpha" {{ $abs->status == 'Alpha' ? 'selected' : '' }}>Alpha</option>
+                            </select>
+                            <small class="text-muted d-block mt-1">Jika diubah ke "Hadir", data ketidakhadiran akan dihapus dari sistem.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Alasan Koreksi oleh Guru Piket <span class="text-danger">*</span></label>
+                            <textarea name="edit_reason" class="form-control" rows="3" placeholder="Contoh: Orang tua mengonfirmasi surat sakit jam 09:00" required>{{ old('edit_reason', $abs->edit_reason) }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan Status</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endforeach
 @endsection

@@ -111,7 +111,7 @@ class PiketModuleController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $teachers  = User::orderBy('name', 'asc')->get();
+        $teachers  = User::whereNotIn('position',[1,8])->orderBy('name', 'asc')->get();
         $classList = Classes::orderBy('code', 'asc')->get();
 
         return view('piket.teacher_absences', compact('date', 'teacherAbsences', 'teachers', 'classList'));

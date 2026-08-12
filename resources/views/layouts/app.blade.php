@@ -105,10 +105,16 @@
                 justify-content: center;
                 width: 100%;
             }
-            .pagination .page-item .page-link {
-                padding: 5px 9px;
-                font-size: 0.8rem;
-            }
+        /* Mobile Modal & Touch Fixes */
+        .modal {
+            z-index: 1055 !important;
+        }
+        .modal-backdrop {
+            z-index: 1050 !important;
+        }
+        [data-bs-toggle="modal"] {
+            cursor: pointer;
+            touch-action: manipulation;
         }
     </style>
     @yield('css')

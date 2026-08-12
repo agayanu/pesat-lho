@@ -68,7 +68,7 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $cls->id }}">
+                                <button type="button" class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $cls->id }}">
                                     <i class="material-icons-outlined">edit</i>
                                 </button>
                                 <form action="{{ route('classes.destroy', $cls->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data kelas ini?')">
@@ -80,50 +80,6 @@
                                 </form>
                             </td>
                         </tr>
-
-                        <!-- Modal Edit -->
-                        <div class="modal fade" id="modalEdit{{ $cls->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form action="{{ route('classes.update', $cls->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Edit Data Kelas</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label class="form-label">Kode / Nama Kelas</label>
-                                                <input type="text" name="code" class="form-control" value="{{ old('code', $cls->code) }}" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Wali Kelas</label>
-                                                <select name="homeroom" class="form-select" required>
-                                                    <option value="">-- Pilih Wali Kelas --</option>
-                                                    @foreach($teachers as $t)
-                                                        <option value="{{ $t->id }}" {{ $cls->homeroom == $t->id ? 'selected' : '' }}>
-                                                            {{ $t->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Kategori Sekolah</label>
-                                                <select name="school" class="form-select" required>
-                                                    <option value="Unggulan" {{ $cls->school == 'Unggulan' ? 'selected' : '' }}>Unggulan</option>
-                                                    <option value="Reguler" {{ $cls->school == 'Reguler' ? 'selected' : '' }}>Reguler</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     @empty
                         <tr>
                             <td colspan="5" class="text-center text-muted">Belum ada data kelas.</td>
@@ -139,14 +95,60 @@
     </div>
 </div>
 
+<!-- Modal Edit Section (Out of table) -->
+@foreach($classes as $cls)
+    <div class="modal fade" id="modalEdit{{ $cls->id }}" tabindex="-1" aria-labelledby="modalEditLabel{{ $cls->id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('classes.update', $cls->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditLabel{{ $cls->id }}">Edit Data Kelas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Kode / Nama Kelas</label>
+                            <input type="text" name="code" class="form-control" value="{{ old('code', $cls->code) }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Wali Kelas</label>
+                            <select name="homeroom" class="form-select" required>
+                                <option value="">-- Pilih Wali Kelas --</option>
+                                @foreach($teachers as $t)
+                                    <option value="{{ $t->id }}" {{ $cls->homeroom == $t->id ? 'selected' : '' }}>
+                                        {{ $t->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kategori Sekolah</label>
+                            <select name="school" class="form-select" required>
+                                <option value="Unggulan" {{ $cls->school == 'Unggulan' ? 'selected' : '' }}>Unggulan</option>
+                                <option value="Reguler" {{ $cls->school == 'Reguler' ? 'selected' : '' }}>Reguler</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endforeach
+
 <!-- Modal Create -->
-<div class="modal fade" id="modalCreate" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="{{ route('classes.store') }}" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Data Kelas</h5>
+                    <h5 class="modal-title" id="modalCreateLabel">Tambah Data Kelas</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
