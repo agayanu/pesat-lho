@@ -155,7 +155,7 @@ class MasterStudentSeeder extends Seeder
             ['id_siswa' => '20260212', 'name' => 'DZAKI RONDI ALFAID', 'gender' => 'L', 'classes' => 'X.U-1', 'program' => 'UNGGULAN', 'studentday' => NULL, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20260200', 'name' => 'FAIZ IQBAL AVIV', 'gender' => 'L', 'classes' => 'X.U-1', 'program' => 'UNGGULAN', 'studentday' => 48, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20260195', 'name' => 'FARSYA CAHYA ANGGRAENI', 'gender' => 'P', 'classes' => 'X.U-1', 'program' => 'UNGGULAN', 'studentday' => NULL, 'user' => 'system', 'created_at' => $now],
-            ['id_siswa' => '20260183', 'name' => 'GILANG RADITYA ARIYANTO', 'gender' => 'L', 'classes' => 'X.U-1', 'program' => 'UNGGULAN', 'studentday' => NULL, 'user' => 'system', 'created_at' => $now],
+            ['id_siswa' => '20260183', 'name' => 'GILANG RADITYA  ARIYANTO', 'gender' => 'L', 'classes' => 'X.U-1', 'program' => 'UNGGULAN', 'studentday' => NULL, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20260176', 'name' => 'HASITA SILMI DELIPUTRI', 'gender' => 'P', 'classes' => 'X.U-1', 'program' => 'UNGGULAN', 'studentday' => NULL, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20260172', 'name' => 'IBRAHIM MAULANA RAFAEL', 'gender' => 'L', 'classes' => 'X.U-1', 'program' => 'UNGGULAN', 'studentday' => NULL, 'user' => 'system', 'created_at' => $now],
             ['id_siswa' => '20260162', 'name' => 'KAMELIA PUTRI RAMADHANIE', 'gender' => 'P', 'classes' => 'X.U-1', 'program' => 'UNGGULAN', 'studentday' => NULL, 'user' => 'system', 'created_at' => $now],

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->integer('homeroom'); // References users.id
+            $table->enum('program', ['INTERNASIONAL', 'UNGGULAN', 'REGULER']);
             $table->enum('school', ['Unggulan', 'Reguler']);
             $table->string('user');
             $table->timestamps();
