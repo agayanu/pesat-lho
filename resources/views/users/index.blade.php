@@ -162,7 +162,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="mt-3">
+        <div class="pagination-container">
             {{ $users->links() }}
         </div>
     </div>

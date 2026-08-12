@@ -157,7 +157,7 @@
             </table>
         </div>
 
-        <div class="mt-3">
+        <div class="pagination-container">
             {{ $students->links() }}
         </div>
     </div>

@@ -114,7 +114,7 @@
             </table>
         </div>
 
-        <div class="mt-3">
+        <div class="pagination-container">
             {{ $positions->links() }}
         </div>
     </div>

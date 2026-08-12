@@ -133,7 +133,7 @@
             </table>
         </div>
 
-        <div class="mt-3">
+        <div class="pagination-container">
             {{ $classes->links() }}
         </div>
     </div>

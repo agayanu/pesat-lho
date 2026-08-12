@@ -154,7 +154,7 @@
             </table>
         </div>
 
-        <div class="mt-3">
+        <div class="pagination-container">
             {{ $absences->links() }}
         </div>
     </div>

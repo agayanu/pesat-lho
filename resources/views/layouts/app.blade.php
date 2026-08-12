@@ -38,6 +38,78 @@
                 width: 259px;
             }
         }
+        /* Custom Responsive Table Navigation & Pagination CSS */
+        .pagination-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+        }
+
+        .pagination {
+            margin-bottom: 0;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .pagination .page-item .page-link {
+            border-radius: 6px !important;
+            color: #495057;
+            font-weight: 500;
+            padding: 6px 12px;
+            border: 1px solid #dee2e6;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.875rem;
+            box-shadow: none !important;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(13, 110, 253, 0.3) !important;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #adb5bd;
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+        }
+
+        .pagination .page-item:not(.disabled):not(.active) .page-link:hover {
+            background-color: #e9ecef;
+            color: #0d6efd;
+            border-color: #ced4da;
+        }
+
+        /* Fix any legacy SVG icon scaling in pagination */
+        nav[role="navigation"] svg {
+            max-width: 1.25rem !important;
+            max-height: 1.25rem !important;
+            height: 1.25rem !important;
+            width: 1.25rem !important;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 576px) {
+            .pagination-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .pagination {
+                justify-content: center;
+                width: 100%;
+            }
+            .pagination .page-item .page-link {
+                padding: 5px 9px;
+                font-size: 0.8rem;
+            }
+        }
     </style>
     @yield('css')
 </head>
