@@ -92,8 +92,8 @@
     <!-- Header Dokumen -->
     <div class="header-title">
         <h3>LAPORAN HARIAN OPERASIONAL (LHO)</h3>
-        <h5>SMA PLUS PGRI CIBINONG / PESAT</h5>
-        <p class="mb-0 text-muted">Tanggal Pelaporan: <strong>{{ \Carbon\Carbon::parse($date)->translatedFormat('l, d F Y') }}</strong></p>
+        <h5>SMA PLUS PGRI CIBINONG</h5>
+        <p class="mb-0 text-muted">Tanggal Pelaporan: <strong>{{ \Carbon\Carbon::parse($date)->locale('id')->translatedFormat('l, d F Y') }}</strong></p>
     </div>
 
     <!-- 1. Presensi Siswa Tidak Hadir -->
@@ -258,7 +258,7 @@
     </table>
 
     <!-- 6. Catatan Pengawasan & Coreatan Tulis Tangan Tablet -->
-    <div class="section-header">6. Catatan Pengawasan & Tulis Tangan Stylus Management</div>
+    <div class="section-header">6. Catatan Pengawasan Management</div>
     
     <table class="table-print">
         <tr>
@@ -271,13 +271,13 @@
             <td>{{ $lhoReport->ph_user ?? '-' }}</td>
             <td>
                 <div>{{ $lhoReport->ph_notes ?? 'Belum mengisi catatan.' }}</div>
-                @if($lhoReport->ph_handwriting_img)
+                @if($lhoReport?->ph_handwriting_img)
                     <div class="mt-2">
                         <small class="d-block text-muted">Catatan Tulis Tangan Tablet PH:</small>
                         <img src="{{ asset($lhoReport->ph_handwriting_img) }}" style="max-height: 120px; border: 1px solid #ccc; padding: 2px; border-radius: 4px;" alt="Tulis Tangan PH">
                     </div>
                 @endif
-                @if($lhoReport->ph_file)
+                @if($lhoReport?->ph_file)
                     <div class="mt-1"><small><em>(Melampirkan File: {{ basename($lhoReport->ph_file) }})</em></small></div>
                 @endif
             </td>
@@ -287,13 +287,13 @@
             <td>{{ $lhoReport->kadep_user ?? '-' }}</td>
             <td>
                 <div>{{ $lhoReport->kadep_global_notes ?? 'Belum mengisi catatan.' }}</div>
-                @if($lhoReport->kadep_handwriting_img)
+                @if($lhoReport?->kadep_handwriting_img)
                     <div class="mt-2">
                         <small class="d-block text-muted">Catatan Tulis Tangan Tablet Kadep:</small>
                         <img src="{{ asset($lhoReport->kadep_handwriting_img) }}" style="max-height: 120px; border: 1px solid #ccc; padding: 2px; border-radius: 4px;" alt="Tulis Tangan Kadep">
                     </div>
                 @endif
-                @if($lhoReport->kadep_file)
+                @if($lhoReport?->kadep_file)
                     <div class="mt-1"><small><em>(Melampirkan File: {{ basename($lhoReport->kadep_file) }})</em></small></div>
                 @endif
             </td>
@@ -303,13 +303,13 @@
             <td>{{ $lhoReport->kepsek_user ?? '-' }}</td>
             <td>
                 <div>{{ $lhoReport->kepsek_notes ?? 'Belum mengisi catatan.' }}</div>
-                @if($lhoReport->kepsek_handwriting_img)
+                @if($lhoReport?->kepsek_handwriting_img)
                     <div class="mt-2">
                         <small class="d-block text-muted">Catatan Tulis Tangan Tablet Kepsek:</small>
                         <img src="{{ asset($lhoReport->kepsek_handwriting_img) }}" style="max-height: 120px; border: 1px solid #ccc; padding: 2px; border-radius: 4px;" alt="Tulis Tangan Kepsek">
                     </div>
                 @endif
-                @if($lhoReport->kepsek_file)
+                @if($lhoReport?->kepsek_file)
                     <div class="mt-1"><small><em>(Melampirkan File: {{ basename($lhoReport->kepsek_file) }})</em></small></div>
                 @endif
             </td>
