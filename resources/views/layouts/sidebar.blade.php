@@ -120,14 +120,15 @@
                 </li>
             @endif
 
-            <!-- Cetak LHO (Dapat Diakses Oleh Semua Role) -->
-            <li class="menu-label">CETAK LAPORAN</li>
-            <li>
-                <a href="{{ route('lho.print') }}" target="_blank">
-                    <div class="parent-icon"><i class="material-icons-outlined">print</i></div>
-                    <div class="menu-title">Cetak LHO Terpadu</div>
-                </a>
-            </li>
+            @if(Auth::user()->hasPosition('Guru Piket') || Auth::user()->hasPosition('Piket') || Auth::user()->hasPosition('PH') || Auth::user()->hasPosition('Penanggung Jawab Harian') || Auth::user()->hasPosition('Kepala Departemen') || Auth::user()->hasPosition('Kadep') || Auth::user()->hasPosition('Kepala Sekolah') || Auth::user()->hasPosition('Kepsek'))
+                <li class="menu-label">CETAK LAPORAN</li>
+                <li>
+                    <a href="{{ route('lho.print') }}" target="_blank">
+                        <div class="parent-icon"><i class="material-icons-outlined">print</i></div>
+                        <div class="menu-title">Cetak LHO Terpadu</div>
+                    </a>
+                </li>
+            @endif
 
             <!-- Master Data (Khusus Admin) -->
             @if(Auth::user()->position == 1 || Auth::user()->hasPosition('Administrator'))
