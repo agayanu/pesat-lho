@@ -198,7 +198,7 @@
     </table>
 
     <!-- 4. Laporan Kegiatan Spesifik Unit -->
-    <div class="section-header">4. Laporan Kegiatan Penanggung Jawab Unit Spesifik</div>
+    <div class="section-header">4. Laporan Kegiatan Penanggung Jawab Unit</div>
     <table class="table-print">
         <thead>
             <tr>
