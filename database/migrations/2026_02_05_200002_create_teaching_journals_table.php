@@ -16,11 +16,14 @@ return new class extends Migration
             $table->date('date');
             $table->string('class_code');
             $table->integer('jam_ke')->default(1);
-            $table->string('teacher_name');
+            $table->unsignedBigInteger('teacher_id')->nullable(); // Foreign key to users.id
+            $table->string('teacher_name')->nullable();
             $table->text('material');
             $table->text('activity');
             $table->string('user');
             $table->timestamps();
+
+            $table->foreign('teacher_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

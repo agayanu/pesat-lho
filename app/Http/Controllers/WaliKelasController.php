@@ -39,7 +39,8 @@ class WaliKelasController extends Controller
                 ->orderBy('jam_ke', 'asc')
                 ->get();
 
-            $teachingJournals = TeachingJournal::where('date', $date)
+            $teachingJournals = TeachingJournal::with('teacher')
+                ->where('date', $date)
                 ->where('class_code', $selectedClassCode)
                 ->orderBy('jam_ke', 'asc')
                 ->get();

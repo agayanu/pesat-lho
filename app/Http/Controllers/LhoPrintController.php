@@ -18,9 +18,9 @@ class LhoPrintController extends Controller
 
         $lhoReport = DailyLhoReport::where('date', $date)->first();
 
-        $teachingJournals = TeachingJournal::where('date', $date)->orderBy('jam_ke', 'asc')->get();
+        $teachingJournals = TeachingJournal::with('teacher')->where('date', $date)->orderBy('jam_ke', 'asc')->get();
         $studentAbsences  = StudentAbsence::with('student')->where('date', $date)->orderBy('class_code', 'asc')->get();
-        $teacherAbsences  = TeacherAbsence::where('date', $date)->orderBy('id', 'desc')->get();
+        $teacherAbsences  = TeacherAbsence::with(['teacher', 'substituteTeacher'])->where('date', $date)->orderBy('id', 'desc')->get();
         $specialReports   = SpecialActivityReport::where('date', $date)->orderBy('id', 'desc')->get();
         $schoolEvents     = SchoolEvent::where('date', $date)->orderBy('id', 'desc')->get();
 

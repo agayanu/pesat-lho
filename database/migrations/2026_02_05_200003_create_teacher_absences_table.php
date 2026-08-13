@@ -14,13 +14,18 @@ return new class extends Migration
         Schema::create('teacher_absences', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->string('teacher_name');
+            $table->unsignedBigInteger('teacher_id')->nullable(); // Foreign key to users.id
+            $table->string('teacher_name')->nullable();
             $table->string('class_code');
             $table->enum('status', ['Izin', 'Sakit', 'Dinas', 'Alpha']);
+            $table->unsignedBigInteger('substitute_teacher_id')->nullable(); // Foreign key to users.id
             $table->string('substitute_teacher')->nullable();
             $table->text('task_description')->nullable();
             $table->string('piket_user');
             $table->timestamps();
+
+            $table->foreign('teacher_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('substitute_teacher_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

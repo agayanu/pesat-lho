@@ -47,10 +47,10 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label fw-bold">Guru Tidak Hadir <span class="text-danger">*</span></label>
-                    <select name="teacher_name" class="form-select" required>
+                    <select name="teacher_id" class="form-select" required>
                         <option value="">-- Pilih Guru --</option>
                         @foreach($teachers as $t)
-                            <option value="{{ $t->name }}">{{ $t->name }}</option>
+                            <option value="{{ $t->id }}">{{ $t->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -74,10 +74,10 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Guru Pengganti (Jika Ada)</label>
-                    <select name="substitute_teacher" class="form-select">
+                    <select name="substitute_teacher_id" class="form-select">
                         <option value="">-- Pilih Guru Pengganti (Opsional) --</option>
                         @foreach($teachers as $t)
-                            <option value="{{ $t->name }}">{{ $t->name }}</option>
+                            <option value="{{ $t->id }}">{{ $t->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -118,12 +118,12 @@
                     @forelse($teacherAbsences as $index => $ta)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td class="fw-bold text-danger">{{ $ta->teacher_name }}</td>
+                            <td class="fw-bold text-danger">{{ $ta->teacher->name ?? $ta->teacher_name }}</td>
                             <td><strong>{{ $ta->class_code }}</strong></td>
                             <td><span class="badge bg-warning text-dark">{{ $ta->status }}</span></td>
                             <td>
-                                @if($ta->substitute_teacher)
-                                    <span class="badge bg-success fs-6">{{ $ta->substitute_teacher }}</span>
+                                @if($ta->substituteTeacher || $ta->substitute_teacher)
+                                    <span class="badge bg-success fs-6">{{ $ta->substituteTeacher->name ?? $ta->substitute_teacher }}</span>
                                 @else
                                     <span class="badge bg-secondary">Tidak Ada Pengganti</span>
                                 @endif

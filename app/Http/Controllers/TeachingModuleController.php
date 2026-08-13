@@ -47,7 +47,8 @@ class TeachingModuleController extends Controller
                 ->keyBy('student_id');
 
             // Get existing journal for current session
-            $existingJournal = TeachingJournal::where('date', $date)
+            $existingJournal = TeachingJournal::with('teacher')
+                ->where('date', $date)
                 ->where('class_code', $selectedClass)
                 ->where('jam_ke', $selectedJam)
                 ->first();
@@ -89,6 +90,7 @@ class TeachingModuleController extends Controller
         $date = $request->date;
         $classCode = $request->class_code;
         $jamKe = $request->jam_ke;
+        $userId = Auth::id();
         $user = Auth::user()->name ?? 'Guru';
 
         // Check if journal already exists for this session
@@ -102,22 +104,22 @@ class TeachingModuleController extends Controller
             return redirect()->back()->with('error', 'Presensi & Jurnal KBM untuk jam pelajaran ini sudah di-submit dan tidak dapat diubah kembali. Hubungi Guru Piket jika ada perubahan.');
         }
 
-        // Save Teaching Journal
+        // Save Teaching Journal with teacher_id
         TeachingJournal::create([
             'date'         => $date,
             'class_code'   => $classCode,
             'jam_ke'       => $jamKe,
+            'teacher_id'   => $userId,
             'teacher_name' => $user,
             'material'     => $request->material,
             'activity'     => $request->activity,
             'user'         => Auth::user()->username ?? 'guru',
         ]);
 
-        // Save new Student Absences (excluding those already marked in previous sessions if skipped)
+        // Save new Student Absences
         if ($request->has('absences') && is_array($request->absences)) {
             foreach ($request->absences as $studentId => $status) {
                 if (in_array($status, ['Izin', 'Sakit', 'Alpha'])) {
-                    // Check if already created for this session
                     StudentAbsence::create([
                         'date'       => $date,
                         'class_code' => $classCode,
@@ -136,10 +138,15 @@ class TeachingModuleController extends Controller
     public function history(Request $request)
     {
         $date = $request->query('date', date('Y-m-d'));
+        $userId = Auth::id();
         $username = Auth::user()->username ?? '';
 
-        $myJournals = TeachingJournal::where('date', $date)
-            ->where('user', $username)
+        $myJournals = TeachingJournal::with('teacher')
+            ->where('date', $date)
+            ->where(function($q) use ($userId, $username) {
+                $q->where('teacher_id', $userId)
+                  ->orWhere('user', $username);
+            })
             ->orderBy('jam_ke', 'asc')
             ->get();
 

@@ -15,9 +15,20 @@ class TeachingJournal extends Model
         'date',
         'class_code',
         'jam_ke',
+        'teacher_id',
         'teacher_name',
         'material',
         'activity',
         'user',
     ];
+
+    public function teacher()
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function getTeacherDisplayNameAttribute()
+    {
+        return $this->teacher->name ?? $this->teacher_name ?? '-';
+    }
 }

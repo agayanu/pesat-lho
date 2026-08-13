@@ -72,7 +72,7 @@
                         @forelse($teachingJournals as $j)
                             <tr>
                                 <td><span class="badge bg-primary fs-6">Jam ke-{{ $j->jam_ke }}</span></td>
-                                <td><strong class="text-dark">{{ $j->teacher_name }}</strong></td>
+                                <td><strong class="text-dark">{{ $j->teacher->name ?? $j->teacher_name }}</strong></td>
                                 <td>{{ $j->material }}</td>
                                 <td>{{ $j->activity }}</td>
                                 <td><small class="text-muted">{{ $j->created_at->format('H:i') }} WIB</small></td>

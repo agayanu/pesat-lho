@@ -216,7 +216,7 @@
                         </thead>
                         <tbody>
                             @forelse($teachingJournals as $j)
-                                <tr><td>Jam ke-{{ $j->jam_ke }}</td><td>{{ $j->class_code }}</td><td>{{ $j->teacher_name }}</td><td>{{ $j->material }}</td><td>{{ $j->activity }}</td></tr>
+                                <tr><td>Jam ke-{{ $j->jam_ke }}</td><td>{{ $j->class_code }}</td><td>{{ $j->teacher->name ?? $j->teacher_name }}</td><td>{{ $j->material }}</td><td>{{ $j->activity }}</td></tr>
                             @empty
                                 <tr><td colspan="5" class="text-center text-muted">Belum ada KBM.</td></tr>
                             @endforelse
@@ -252,7 +252,7 @@
                         </thead>
                         <tbody>
                             @forelse($teacherAbsences as $ta)
-                                <tr><td class="text-danger fw-bold">{{ $ta->teacher_name }}</td><td>{{ $ta->class_code }}</td><td>{{ $ta->status }}</td><td>{{ $ta->substitute_teacher ?? '-' }}</td><td>{{ $ta->task_description ?? '-' }}</td></tr>
+                                <tr><td class="text-danger fw-bold">{{ $ta->teacher->name ?? $ta->teacher_name }}</td><td>{{ $ta->class_code }}</td><td>{{ $ta->status }}</td><td>{{ $ta->substituteTeacher->name ?? $ta->substitute_teacher ?? '-' }}</td><td>{{ $ta->task_description ?? '-' }}</td></tr>
                             @empty
                                 <tr><td colspan="5" class="text-center text-muted">Tidak ada guru tidak hadir.</td></tr>
                             @endforelse

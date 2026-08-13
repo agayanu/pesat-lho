@@ -22,10 +22,10 @@ class PiketModuleController extends Controller
     {
         $date = $request->query('date', date('Y-m-d'));
 
-        // Summary Data Hari Ini
-        $teachingJournals = TeachingJournal::where('date', $date)->orderBy('jam_ke', 'asc')->get();
+        // Summary Data Hari Ini dengan Eager Loading User ID
+        $teachingJournals = TeachingJournal::with('teacher')->where('date', $date)->orderBy('jam_ke', 'asc')->get();
         $studentAbsences  = StudentAbsence::with('student')->where('date', $date)->orderBy('class_code', 'asc')->get();
-        $teacherAbsences  = TeacherAbsence::where('date', $date)->orderBy('id', 'desc')->get();
+        $teacherAbsences  = TeacherAbsence::with(['teacher', 'substituteTeacher'])->where('date', $date)->orderBy('id', 'desc')->get();
         $specialReports   = SpecialActivityReport::where('date', $date)->orderBy('id', 'desc')->get();
         $schoolEvents     = SchoolEvent::where('date', $date)->orderBy('id', 'desc')->get();
 
@@ -107,11 +107,12 @@ class PiketModuleController extends Controller
     {
         $date = $request->query('date', date('Y-m-d'));
 
-        $teacherAbsences = TeacherAbsence::where('date', $date)
+        $teacherAbsences = TeacherAbsence::with(['teacher', 'substituteTeacher'])
+            ->where('date', $date)
             ->orderBy('id', 'desc')
             ->get();
 
-        $teachers  = User::whereNotIn('position',[1,8])->orderBy('name', 'asc')->get();
+        $teachers  = User::whereNotIn('position', [1, 8])->orderBy('name', 'asc')->get();
         $classList = Classes::orderBy('code', 'asc')->get();
 
         return view('piket.teacher_absences', compact('date', 'teacherAbsences', 'teachers', 'classList'));
@@ -123,26 +124,31 @@ class PiketModuleController extends Controller
     public function storeTeacherAbsence(Request $request)
     {
         $request->validate([
-            'date'               => 'required|date',
-            'teacher_name'       => 'required|string',
-            'class_code'         => 'required|string',
-            'status'             => 'required|in:Izin,Sakit,Dinas,Alpha',
-            'substitute_teacher' => 'nullable|string',
-            'task_description'   => 'nullable|string',
+            'date'                  => 'required|date',
+            'teacher_id'            => 'required|exists:users,id',
+            'class_code'            => 'required|string',
+            'status'                => 'required|in:Izin,Sakit,Dinas,Alpha',
+            'substitute_teacher_id' => 'nullable|exists:users,id',
+            'task_description'      => 'nullable|string',
         ], [
-            'teacher_name.required' => 'Nama guru tidak hadir wajib dipilih/diisi',
-            'class_code.required'   => 'Kelas wajib dipilih',
-            'status.required'       => 'Status ketidakhadiran wajib dipilih',
+            'teacher_id.required' => 'Guru tidak hadir wajib dipilih',
+            'class_code.required' => 'Kelas wajib dipilih',
+            'status.required'     => 'Status ketidakhadiran wajib dipilih',
         ]);
 
+        $absentUser = User::find($request->teacher_id);
+        $substituteUser = $request->substitute_teacher_id ? User::find($request->substitute_teacher_id) : null;
+
         TeacherAbsence::create([
-            'date'               => $request->date,
-            'teacher_name'       => $request->teacher_name,
-            'class_code'         => $request->class_code,
-            'status'             => $request->status,
-            'substitute_teacher' => $request->substitute_teacher,
-            'task_description'   => $request->task_description,
-            'piket_user'         => Auth::user()->name ?? 'Guru Piket',
+            'date'                  => $request->date,
+            'teacher_id'            => $request->teacher_id,
+            'teacher_name'          => $absentUser->name ?? '',
+            'class_code'            => $request->class_code,
+            'status'                => $request->status,
+            'substitute_teacher_id' => $request->substitute_teacher_id,
+            'substitute_teacher'    => $substituteUser->name ?? null,
+            'task_description'      => $request->task_description,
+            'piket_user'            => Auth::user()->name ?? 'Guru Piket',
         ]);
 
         return redirect()->back()->with('success', 'Data presensi guru tidak hadir berhasil disimpan');

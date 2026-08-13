@@ -131,7 +131,7 @@
                                 <tr>
                                     <td><span class="badge bg-primary">Jam ke-{{ $j->jam_ke }}</span></td>
                                     <td><strong>{{ $j->class_code }}</strong></td>
-                                    <td>{{ $j->teacher_name }}</td>
+                                    <td>{{ $j->teacher->name ?? $j->teacher_name }}</td>
                                     <td>{{ $j->material }}</td>
                                     <td>{{ $j->activity }}</td>
                                 </tr>
@@ -218,12 +218,12 @@
                         <tbody>
                             @forelse($teacherAbsences as $ta)
                                 <tr>
-                                    <td class="fw-bold text-danger">{{ $ta->teacher_name }}</td>
+                                    <td class="fw-bold text-danger">{{ $ta->teacher->name ?? $ta->teacher_name }}</td>
                                     <td><strong>{{ $ta->class_code }}</strong></td>
                                     <td><span class="badge bg-warning text-dark">{{ $ta->status }}</span></td>
                                     <td>
-                                        @if($ta->substitute_teacher)
-                                            <span class="badge bg-success">{{ $ta->substitute_teacher }}</span>
+                                        @if($ta->substituteTeacher || $ta->substitute_teacher)
+                                            <span class="badge bg-success">{{ $ta->substituteTeacher->name ?? $ta->substitute_teacher }}</span>
                                         @else
                                             <span class="badge bg-secondary">Tidak Ada Guru Pengganti</span>
                                         @endif

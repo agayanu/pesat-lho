@@ -152,10 +152,10 @@
             @forelse($teacherAbsences as $index => $ta)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-                    <td><strong>{{ $ta->teacher_name }}</strong></td>
+                    <td><strong>{{ $ta->teacher->name ?? $ta->teacher_name }}</strong></td>
                     <td class="text-center">{{ $ta->class_code }}</td>
                     <td class="text-center">{{ $ta->status }}</td>
-                    <td>{{ $ta->substitute_teacher ?? '-' }}</td>
+                    <td>{{ $ta->substituteTeacher->name ?? $ta->substitute_teacher ?? '-' }}</td>
                     <td>{{ $ta->task_description ?? '-' }}</td>
                 </tr>
             @empty
@@ -185,7 +185,7 @@
                     <td class="text-center">{{ $index + 1 }}</td>
                     <td class="text-center">Jam {{ $j->jam_ke }}</td>
                     <td class="text-center"><strong>{{ $j->class_code }}</strong></td>
-                    <td>{{ $j->teacher_name }}</td>
+                    <td>{{ $j->teacher->name ?? $j->teacher_name }}</td>
                     <td>{{ $j->material }}</td>
                     <td>{{ $j->activity }}</td>
                 </tr>
