@@ -18,7 +18,9 @@ class SpecialActivityController extends Controller
         $unitList = [
             'Bimbingan Baca Quran (BBQ)',
             'Kuliah Dhuha',
-            'Kopasus IT (RPL, TKJ, MM)',
+            'Kopasus IT (RPL)',
+            'Kopasus IT (TKJ)',
+            'Kopasus IT (MM)',
             'Kursus Bahasa Inggris',
             'Medical Center (UKS)',
             'Perpustakaan',
