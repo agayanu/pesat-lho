@@ -52,6 +52,10 @@
                         <option value="Kunjungan Orang Tua Siswa">Kunjungan Orang Tua Siswa</option>
                         <option value="Acara / Event Sekolah">Acara / Event Sekolah</option>
                         <option value="Kejadian Khusus / Kedisiplinan">Kejadian Khusus / Kedisiplinan</option>
+                        <option value="Peringatan Hari Besar Keagamaan dan Nasional">Peringatan Hari Besar Keagamaan dan Nasional</option>
+                        <option value="Kegiatan Rapat">Kegiatan Rapat</option>
+                        <option value="Ujian">Ujian</option>
+                        <option value="Pembelajaran Jarak Jauh">Pembelajaran Jarak Jauh</option>
                         <option value="Lainnya">Lainnya</option>
                     </select>
                 </div>
