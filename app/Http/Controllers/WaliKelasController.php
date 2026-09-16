@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Classes;
 use App\Models\Student;
 use App\Models\StudentAbsence;
+use App\Models\StudentNote;
 use App\Models\TeachingJournal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,7 @@ class WaliKelasController extends Controller
         $studentAbsences  = collect();
         $teachingJournals = collect();
         $studentsList     = collect();
+        $studentNotes     = collect();
 
         if ($selectedClassCode) {
             $studentAbsences = StudentAbsence::with('student')
@@ -48,6 +50,12 @@ class WaliKelasController extends Controller
             $studentsList = Student::where('classes', $selectedClassCode)
                 ->orderBy('name', 'asc')
                 ->get();
+
+            $studentNotes = StudentNote::with(['student', 'teacher'])
+                ->where('date', $date)
+                ->where('class_code', $selectedClassCode)
+                ->orderBy('jam_ke', 'asc')
+                ->get();
         }
 
         return view('walikelas.dashboard', compact(
@@ -57,7 +65,8 @@ class WaliKelasController extends Controller
             'classList',
             'studentAbsences',
             'teachingJournals',
-            'studentsList'
+            'studentsList',
+            'studentNotes'
         ));
     }
 }

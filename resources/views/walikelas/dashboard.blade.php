@@ -138,5 +138,58 @@
             </div>
         </div>
     </div>
+
+    <!-- Section 3: Catatan Khusus Siswa dari Guru Pengajar -->
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
+            <h5 class="mb-0 text-white"><i class="material-icons-outlined align-middle me-2">note_alt</i> Catatan Khusus Siswa Kelas {{ $selectedClassCode }}</h5>
+            <span class="badge bg-light text-dark">{{ $studentNotes->count() }} Catatan Diberikan Hari Ini</span>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>Jam Ke-</th>
+                            <th>NIS</th>
+                            <th>Nama Siswa</th>
+                            <th>Guru Pencatat</th>
+                            <th>Isi Catatan</th>
+                            <th>Status Koreksi Piket</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($studentNotes as $index => $sn)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td><span class="badge bg-primary">Jam ke-{{ $sn->jam_ke }}</span></td>
+                                <td><code>{{ $sn->student->id_siswa ?? '-' }}</code></td>
+                                <td class="fw-bold">{{ $sn->student->name ?? '-' }}</td>
+                                <td>{{ $sn->teacher->name ?? $sn->teacher_name ?? $sn->created_by }}</td>
+                                <td>
+                                    <div class="p-2 border rounded bg-light text-dark">
+                                        {{ $sn->note }}
+                                    </div>
+                                </td>
+                                <td>
+                                    @if($sn->is_edited_by_piket)
+                                        <span class="badge bg-warning text-dark">Dikoreksi Piket ({{ $sn->piket_user }})</span>
+                                        <br><small class="text-muted">Ket: {{ $sn->edit_reason }}</small>
+                                    @else
+                                        <span class="badge bg-secondary">Asli dari Guru</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">Belum ada catatan khusus untuk siswa kelas ini hari ini.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 @endif
 @endsection

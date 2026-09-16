@@ -21,4 +21,9 @@ class Student extends Model
         'studentday',
         'user',
     ];
+
+    public function notes()
+    {
+        return $this->hasMany(StudentNote::class, 'student_id');
+    }
 }

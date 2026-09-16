@@ -114,7 +114,8 @@
                                 <th>Nama Siswa</th>
                                 <th style="width: 80px;">L/P</th>
                                 <th>Status Jam Sebelumnya</th>
-                                <th style="width: 280px;" class="text-center">Status Jam ke-{{ $selectedJam }}</th>
+                                <th style="width: 250px;" class="text-center">Status Jam ke-{{ $selectedJam }}</th>
+                                <th style="width: 240px;" class="text-center">Catatan Khusus Siswa</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -122,6 +123,7 @@
                                 @php
                                     $prevAbsence = $previousAbsences->get($std->id);
                                     $currAbsence = $currentAbsences->get($std->id);
+                                    $stdNotes = $studentNotes->get($std->id, collect());
                                 @endphp
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
@@ -158,10 +160,32 @@
                                             </div>
                                         @endif
                                     </td>
+                                    <td>
+                                        <div class="d-flex flex-column gap-1">
+                                            @if($stdNotes->isNotEmpty())
+                                                <button type="button" class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#viewNotesModal{{ $std->id }}">
+                                                    <i class="material-icons-outlined fs-6 align-middle">visibility</i> Lihat Catatan ({{ $stdNotes->count() }})
+                                                </button>
+                                            @endif
+
+                                            @if(!$isAlreadySubmitted)
+                                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#noteCollapse{{ $std->id }}">
+                                                    <i class="material-icons-outlined fs-6 align-middle">edit_note</i> Beri Catatan
+                                                </button>
+                                                <div class="collapse mt-1" id="noteCollapse{{ $std->id }}">
+                                                    <textarea name="student_notes[{{ $std->id }}]" class="form-control form-control-sm" rows="2" placeholder="Tulis catatan untuk {{ $std->name }}..."></textarea>
+                                                </div>
+                                            @else
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#quickAddNoteModal{{ $std->id }}">
+                                                    <i class="material-icons-outlined fs-6 align-middle">add_comment</i> Tambah Catatan
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted">Tidak ada data siswa terdaftar pada kelas ini.</td>
+                                    <td colspan="7" class="text-center text-muted">Tidak ada data siswa terdaftar pada kelas ini.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -195,6 +219,172 @@
             </div>
         </div>
     </form>
+
+    <!-- Modals untuk Catatan Siswa -->
+    @foreach($students as $std)
+        @php
+            $stdNotes = $studentNotes->get($std->id, collect());
+        @endphp
+
+        <!-- Modal Lihat Catatan Siswa -->
+        @if($stdNotes->isNotEmpty())
+            <div class="modal fade" id="viewNotesModal{{ $std->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title text-white">
+                                <i class="material-icons-outlined align-middle me-1">note_alt</i> Catatan Siswa: {{ $std->name }} (<code>{{ $std->id_siswa }}</code>)
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info py-2 mb-3">
+                                <small><i class="material-icons-outlined fs-6 align-middle me-1">info</i> Catatan ini bersifat akumulatif dan dapat dilihat oleh seluruh pengajar, wali kelas, guru piket, dan manajemen sekolah.</small>
+                            </div>
+
+                            <div class="list-group">
+                                @foreach($stdNotes as $n)
+                                    <div class="list-group-item list-group-item-action flex-column align-items-start mb-2 border rounded shadow-sm">
+                                        <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                            <h6 class="mb-1 text-primary">
+                                                <i class="material-icons-outlined fs-6 align-middle">person</i> {{ $n->teacher->name ?? $n->teacher_name ?? $n->created_by }}
+                                                <span class="badge bg-secondary ms-2">Jam ke-{{ $n->jam_ke }}</span>
+                                            </h6>
+                                            <small class="text-muted">{{ $n->created_at ? $n->created_at->format('H:i') : '' }} WIB</small>
+                                        </div>
+                                        <div class="p-2 bg-light rounded text-dark fs-6">
+                                            {{ $n->note }}
+                                        </div>
+                                        @if($n->is_edited_by_piket)
+                                            <small class="text-warning fw-bold d-block mt-2">
+                                                <i class="material-icons-outlined fs-6 align-middle">history_edu</i> Dikoreksi Guru Piket: {{ $n->piket_user }} (Alasan: {{ $n->edit_reason }})
+                                            </small>
+                                        @endif
+
+                                        @if(Auth::user()->hasPosition('Guru Piket') || Auth::user()->hasPosition('Piket') || Auth::user()->position == 1)
+                                            <div class="mt-2 text-end">
+                                                <button type="button" class="btn btn-sm btn-warning text-dark me-1" data-bs-toggle="modal" data-bs-target="#editStudentNoteModal{{ $n->id }}">
+                                                    <i class="material-icons-outlined fs-6 align-middle">edit</i> Edit (Piket)
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteStudentNoteModal{{ $n->id }}">
+                                                    <i class="material-icons-outlined fs-6 align-middle">delete</i> Hapus (Piket)
+                                                </button>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modals Edit & Delete Khusus Piket -->
+            @if(Auth::user()->hasPosition('Guru Piket') || Auth::user()->hasPosition('Piket') || Auth::user()->position == 1)
+                @foreach($stdNotes as $n)
+                    <!-- Modal Edit Catatan Piket -->
+                    <div class="modal fade text-start" id="editStudentNoteModal{{ $n->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form action="{{ route('piket.student-notes.update', $n->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="modal-header bg-warning">
+                                        <h5 class="modal-title text-dark"><i class="material-icons-outlined align-middle me-1">edit</i> Edit Catatan Siswa (Guru Piket)</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Siswa</label>
+                                            <input type="text" class="form-control" value="{{ $std->name }} ({{ $n->class_code }})" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Isi Catatan <span class="text-danger">*</span></label>
+                                            <textarea name="note" class="form-control" rows="3" required>{{ old('note', $n->note) }}</textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Alasan Perubahan oleh Piket <span class="text-danger">*</span></label>
+                                            <input type="text" name="edit_reason" class="form-control" placeholder="Contoh: Klarifikasi wali kelas / revisi..." required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-warning text-dark">Simpan Perubahan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Hapus Catatan Piket -->
+                    <div class="modal fade text-start" id="deleteStudentNoteModal{{ $n->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form action="{{ route('piket.student-notes.destroy', $n->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title text-white"><i class="material-icons-outlined align-middle me-1">delete</i> Hapus Catatan Siswa</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Yakin ingin menghapus catatan untuk siswa <strong>{{ $std->name }}</strong>?</p>
+                                        <div class="p-2 border rounded bg-light mb-3">
+                                            <em>"{{ $n->note }}"</em>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Alasan Penghapusan (Opsional)</label>
+                                            <input type="text" name="edit_reason" class="form-control" placeholder="Contoh: Catatan salah / dibatalkan">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-danger">Ya, Hapus Catatan</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+        @endif
+
+        <!-- Modal Tambah Catatan Cepat (jika form utama sudah di-submit) -->
+        <div class="modal fade" id="quickAddNoteModal{{ $std->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ route('teaching.student-notes.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="date" value="{{ $date }}">
+                        <input type="hidden" name="class_code" value="{{ $selectedClass }}">
+                        <input type="hidden" name="jam_ke" value="{{ $selectedJam }}">
+                        <input type="hidden" name="student_id" value="{{ $std->id }}">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title text-white"><i class="material-icons-outlined align-middle me-1">rate_review</i> Beri Catatan: {{ $std->name }}</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Siswa</label>
+                                <input type="text" class="form-control" value="{{ $std->name }} ({{ $std->id_siswa }}) - Kelas {{ $selectedClass }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Isi Catatan <span class="text-danger">*</span></label>
+                                <textarea name="note" class="form-control" rows="3" placeholder="Tuliskan catatan tentang siswa ini..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan Catatan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @else
     <div class="card p-5 text-center text-muted">
         <i class="material-icons-outlined display-1 text-secondary mb-3">class</i>

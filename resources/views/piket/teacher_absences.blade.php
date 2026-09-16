@@ -72,6 +72,22 @@
                         <option value="Alpha">Alpha</option>
                     </select>
                 </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Dari Jam Ke- <span class="text-danger">*</span></label>
+                    <select name="from_jam_ke" id="fromJamKe" class="form-select" required>
+                        @for($i = 1; $i <= 10; $i++)
+                            <option value="{{ $i }}" {{ old('from_jam_ke', 1) == $i ? 'selected' : '' }}>Jam ke-{{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Sampai Jam Ke- <span class="text-danger">*</span></label>
+                    <select name="to_jam_ke" id="toJamKe" class="form-select" required>
+                        @for($i = 1; $i <= 10; $i++)
+                            <option value="{{ $i }}" {{ old('to_jam_ke', 1) == $i ? 'selected' : '' }}>Jam ke-{{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Guru Pengganti (Jika Ada)</label>
                     <select name="substitute_teacher_id" class="form-select">
@@ -105,6 +121,7 @@
                 <thead class="table-secondary">
                     <tr>
                         <th style="width: 50px;">#</th>
+                        <th>Jam Ke-</th>
                         <th>Guru Tidak Hadir</th>
                         <th>Kelas</th>
                         <th>Status</th>
@@ -118,6 +135,7 @@
                     @forelse($teacherAbsences as $index => $ta)
                         <tr>
                             <td>{{ $index + 1 }}</td>
+                            <td><span class="badge bg-dark">{{ $ta->jam_display }}</span></td>
                             <td class="fw-bold text-danger">{{ $ta->teacher->name ?? $ta->teacher_name }}</td>
                             <td><strong>{{ $ta->class_code }}</strong></td>
                             <td><span class="badge bg-warning text-dark">{{ $ta->status }}</span></td>
@@ -142,7 +160,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted py-4">Belum ada pencatatan guru tidak hadir untuk tanggal ini.</td>
+                            <td colspan="9" class="text-center text-muted py-4">Belum ada pencatatan guru tidak hadir untuk tanggal ini.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -150,4 +168,24 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fromJam = document.getElementById('fromJamKe');
+        const toJam = document.getElementById('toJamKe');
+
+        if (fromJam && toJam) {
+            fromJam.addEventListener('change', function() {
+                if (parseInt(toJam.value) < parseInt(fromJam.value)) {
+                    toJam.value = fromJam.value;
+                }
+            });
+            toJam.addEventListener('change', function() {
+                if (parseInt(toJam.value) < parseInt(fromJam.value)) {
+                    fromJam.value = toJam.value;
+                }
+            });
+        }
+    });
+</script>
 @endsection

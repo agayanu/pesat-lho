@@ -28,4 +28,24 @@ class DailyLhoReport extends Model
         'kepsek_handwriting_img',
         'status',
     ];
+
+    public function attachments()
+    {
+        return $this->hasMany(DailyLhoAttachment::class, 'daily_lho_report_id');
+    }
+
+    public function phAttachments()
+    {
+        return $this->hasMany(DailyLhoAttachment::class, 'daily_lho_report_id')->where('role', 'PH');
+    }
+
+    public function kadepAttachments()
+    {
+        return $this->hasMany(DailyLhoAttachment::class, 'daily_lho_report_id')->where('role', 'KADEP');
+    }
+
+    public function kepsekAttachments()
+    {
+        return $this->hasMany(DailyLhoAttachment::class, 'daily_lho_report_id')->where('role', 'KEPSEK');
+    }
 }

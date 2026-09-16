@@ -62,8 +62,25 @@
             @if($lhoReport->ph_file)
                 <div class="mt-2">
                     <a href="{{ asset($lhoReport->ph_file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                        <i class="material-icons-outlined align-middle me-1">download</i> Unduh Lampiran PH
+                        <i class="material-icons-outlined align-middle me-1">download</i> Unduh Lampiran Utama PH
                     </a>
+                </div>
+            @endif
+            @if($lhoReport->phAttachments && $lhoReport->phAttachments->count() > 0)
+                <div class="mt-2 pt-2 border-top">
+                    <small class="fw-bold text-muted d-block mb-1">Lampiran Dokumen / Foto PH:</small>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach($lhoReport->phAttachments as $pAtt)
+                            <a href="{{ asset($pAtt->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center">
+                                @if($pAtt->isImage())
+                                    <img src="{{ asset($pAtt->file_path) }}" class="rounded me-1" style="width: 20px; height: 20px; object-fit: cover;" alt="{{ $pAtt->file_label }}">
+                                @else
+                                    <i class="material-icons-outlined fs-6 me-1">description</i>
+                                @endif
+                                <span>{{ $pAtt->file_label }}</span>
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
             @endif
         </div>
@@ -85,8 +102,25 @@
             @if($lhoReport->kadep_file)
                 <div class="mt-2">
                     <a href="{{ asset($lhoReport->kadep_file) }}" target="_blank" class="btn btn-sm btn-outline-warning">
-                        <i class="material-icons-outlined align-middle me-1">download</i> Unduh Lampiran Kadep
+                        <i class="material-icons-outlined align-middle me-1">download</i> Unduh Lampiran Utama Kadep
                     </a>
+                </div>
+            @endif
+            @if($lhoReport->kadepAttachments && $lhoReport->kadepAttachments->count() > 0)
+                <div class="mt-2 pt-2 border-top">
+                    <small class="fw-bold text-muted d-block mb-1">Lampiran Dokumen / Foto Kadep:</small>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach($lhoReport->kadepAttachments as $kAtt)
+                            <a href="{{ asset($kAtt->file_path) }}" target="_blank" class="btn btn-sm btn-outline-warning d-inline-flex align-items-center">
+                                @if($kAtt->isImage())
+                                    <img src="{{ asset($kAtt->file_path) }}" class="rounded me-1" style="width: 20px; height: 20px; object-fit: cover;" alt="{{ $kAtt->file_label }}">
+                                @else
+                                    <i class="material-icons-outlined fs-6 me-1">description</i>
+                                @endif
+                                <span>{{ $kAtt->file_label }}</span>
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
             @endif
         </div>
@@ -185,6 +219,7 @@
             <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-guru" type="button" role="tab">Presensi Guru ({{ $teacherAbsences->count() }})</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-special" type="button" role="tab">Kegiatan Spesifik ({{ $specialReports->count() }})</button></li>
             <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-events" type="button" role="tab">Event Sekolah ({{ $schoolEvents->count() }})</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-catatan-siswa" type="button" role="tab">Catatan Siswa ({{ $studentNotes->count() }})</button></li>
         </ul>
 
         <div class="tab-content">
@@ -228,13 +263,13 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped align-middle">
                         <thead class="table-secondary">
-                            <tr><th>Guru Tidak Hadir</th><th>Kelas</th><th>Status</th><th>Guru Pengganti</th><th>Tugas</th></tr>
+                            <tr><th>Jam Ke-</th><th>Guru Tidak Hadir</th><th>Kelas</th><th>Status</th><th>Guru Pengganti</th><th>Tugas</th></tr>
                         </thead>
                         <tbody>
                             @forelse($teacherAbsences as $ta)
-                                <tr><td class="text-danger fw-bold">{{ $ta->teacher->name ?? $ta->teacher_name }}</td><td>{{ $ta->class_code }}</td><td>{{ $ta->status }}</td><td>{{ $ta->substituteTeacher->name ?? $ta->substitute_teacher ?? '-' }}</td><td>{{ $ta->task_description ?? '-' }}</td></tr>
+                                <tr><td><span class="badge bg-dark">{{ $ta->jam_display }}</span></td><td class="text-danger fw-bold">{{ $ta->teacher->name ?? $ta->teacher_name }}</td><td>{{ $ta->class_code }}</td><td>{{ $ta->status }}</td><td>{{ $ta->substituteTeacher->name ?? $ta->substitute_teacher ?? '-' }}</td><td>{{ $ta->task_description ?? '-' }}</td></tr>
                             @empty
-                                <tr><td colspan="5" class="text-center text-muted">Tidak ada guru tidak hadir.</td></tr>
+                                <tr><td colspan="6" class="text-center text-muted">Tidak ada guru tidak hadir.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -267,6 +302,51 @@
                                 <tr><td>{{ $ev->category }}</td><td>{{ $ev->title }}</td><td>{{ $ev->description }}</td><td>{{ $ev->piket_user }}</td></tr>
                             @empty
                                 <tr><td colspan="4" class="text-center text-muted">Belum ada event.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="tab-catatan-siswa" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th>Jam Ke-</th>
+                                <th>Kelas</th>
+                                <th>NIS</th>
+                                <th>Nama Siswa</th>
+                                <th>Guru Pengajar</th>
+                                <th>Catatan Siswa</th>
+                                <th>Status Koreksi Piket</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($studentNotes as $sn)
+                                <tr>
+                                    <td><span class="badge bg-primary">Jam ke-{{ $sn->jam_ke }}</span></td>
+                                    <td><strong>{{ $sn->class_code }}</strong></td>
+                                    <td><code>{{ $sn->student->id_siswa ?? '-' }}</code></td>
+                                    <td class="fw-bold">{{ $sn->student->name ?? '-' }}</td>
+                                    <td>{{ $sn->teacher->name ?? $sn->teacher_name }}</td>
+                                    <td>
+                                        <div class="p-2 bg-light border rounded">
+                                            {{ $sn->note }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if($sn->is_edited_by_piket)
+                                            <span class="badge bg-success">Diedit Piket ({{ $sn->piket_user }})</span>
+                                            @if($sn->edit_reason)
+                                                <br><small class="text-muted">{{ $sn->edit_reason }}</small>
+                                            @endif
+                                        @else
+                                            <span class="badge bg-secondary">Asli Guru Pengajar</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="7" class="text-center text-muted py-3">Tidak ada catatan siswa pada tanggal ini.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

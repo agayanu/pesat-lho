@@ -20,8 +20,20 @@ class TeacherAbsence extends Model
         'substitute_teacher_id',
         'substitute_teacher',
         'task_description',
+        'from_jam_ke',
+        'to_jam_ke',
         'piket_user',
     ];
+
+    public function getJamDisplayAttribute()
+    {
+        $from = $this->from_jam_ke ?: 1;
+        $to = $this->to_jam_ke ?: $from;
+        if ($from == $to) {
+            return 'Jam ke-' . $from;
+        }
+        return 'Jam ' . $from . ' - ' . $to;
+    }
 
     public function teacher()
     {

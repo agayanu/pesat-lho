@@ -141,6 +141,7 @@
         <thead>
             <tr>
                 <th style="width: 30px;">#</th>
+                <th style="width: 90px;">Jam Ke-</th>
                 <th>Guru Tidak Hadir</th>
                 <th>Kelas</th>
                 <th>Status</th>
@@ -152,6 +153,7 @@
             @forelse($teacherAbsences as $index => $ta)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-center"><strong>{{ $ta->jam_display }}</strong></td>
                     <td><strong>{{ $ta->teacher->name ?? $ta->teacher_name }}</strong></td>
                     <td class="text-center">{{ $ta->class_code }}</td>
                     <td class="text-center">{{ $ta->status }}</td>
@@ -160,7 +162,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center text-muted">Nihil (Semua guru hadir).</td>
+                    <td colspan="7" class="text-center text-muted">Nihil (Semua guru hadir).</td>
                 </tr>
             @endforelse
         </tbody>
@@ -197,8 +199,49 @@
         </tbody>
     </table>
 
-    <!-- 4. Laporan Kegiatan Spesifik Unit -->
-    <div class="section-header">4. Laporan Kegiatan Penanggung Jawab Unit</div>
+    <!-- 4. Catatan Khusus Siswa dari Guru Pengajar -->
+    <div class="section-header">4. Catatan Khusus Siswa dari Guru Pengajar</div>
+    <table class="table-print">
+        <thead>
+            <tr>
+                <th style="width: 30px;">#</th>
+                <th style="width: 80px;">Jam Ke-</th>
+                <th>Kelas</th>
+                <th>NIS</th>
+                <th>Nama Siswa</th>
+                <th>Guru Pencatat</th>
+                <th>Catatan Khusus Siswa</th>
+                <th>Keterangan Piket</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($studentNotes as $index => $sn)
+                <tr>
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-center">Jam {{ $sn->jam_ke }}</td>
+                    <td class="text-center"><strong>{{ $sn->class_code }}</strong></td>
+                    <td class="text-center">{{ $sn->student->id_siswa ?? '-' }}</td>
+                    <td><strong>{{ $sn->student->name ?? '-' }}</strong></td>
+                    <td>{{ $sn->teacher->name ?? $sn->teacher_name }}</td>
+                    <td>{{ $sn->note }}</td>
+                    <td class="text-center">
+                        @if($sn->is_edited_by_piket)
+                            Koreksi Piket ({{ $sn->piket_user }})
+                        @else
+                            Asli Guru
+                        @endif
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="8" class="text-center text-muted">Tidak ada catatan khusus siswa pada tanggal ini.</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <!-- 5. Laporan Kegiatan Spesifik Unit -->
+    <div class="section-header">5. Laporan Kegiatan Penanggung Jawab Unit</div>
     <table class="table-print">
         <thead>
             <tr>
@@ -228,8 +271,8 @@
         </tbody>
     </table>
 
-    <!-- 5. Event & Kejadian Sekolah -->
-    <div class="section-header">5. Event & Kejadian Sekolah</div>
+    <!-- 6. Event & Kejadian Sekolah -->
+    <div class="section-header">6. Event & Kejadian Sekolah</div>
     <table class="table-print">
         <thead>
             <tr>
@@ -257,14 +300,14 @@
         </tbody>
     </table>
 
-    <!-- 6. Catatan Pengawasan & Coreatan Tulis Tangan Tablet -->
-    <div class="section-header">6. Catatan Pengawasan Management</div>
+    <!-- 7. Catatan Pengawasan & Coretan Tulis Tangan Tablet -->
+    <div class="section-header">7. Catatan Pengawasan Management</div>
     
     <table class="table-print">
         <tr>
             <th style="width: 25%;">Peran</th>
             <th style="width: 25%;">Nama Penanggung Jawab</th>
-            <th>Catatan Pengawasan Teks & Coretan Tulis Tangan (Tablet Stylus)</th>
+            <th>Catatan Pengawasan Teks, Coretan Tulis Tangan, & Lampiran File/Foto</th>
         </tr>
         <tr>
             <td><strong>1. Penanggung Jawab Harian (PH)</strong></td>
@@ -279,6 +322,21 @@
                 @endif
                 @if($lhoReport?->ph_file)
                     <div class="mt-1"><small><em>(Melampirkan File: {{ basename($lhoReport->ph_file) }})</em></small></div>
+                @endif
+                @if($lhoReport && $lhoReport->phAttachments && $lhoReport->phAttachments->count() > 0)
+                    <div class="mt-2 pt-2 border-top">
+                        <small class="d-block fw-bold text-muted mb-1">Lampiran File / Foto Dokumen PH:</small>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach($lhoReport->phAttachments as $pAtt)
+                                <div style="display: inline-block; border: 1px solid #ccc; padding: 4px; border-radius: 4px; text-align: center; margin-bottom: 5px;">
+                                    @if($pAtt->isImage())
+                                        <img src="{{ asset($pAtt->file_path) }}" style="max-height: 80px; max-width: 120px; display: block; margin: 0 auto 3px;" alt="{{ $pAtt->file_label }}">
+                                    @endif
+                                    <small><strong>{{ $pAtt->file_label }}</strong> ({{ $pAtt->file_name }})</small>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 @endif
             </td>
         </tr>
@@ -295,6 +353,21 @@
                 @endif
                 @if($lhoReport?->kadep_file)
                     <div class="mt-1"><small><em>(Melampirkan File: {{ basename($lhoReport->kadep_file) }})</em></small></div>
+                @endif
+                @if($lhoReport && $lhoReport->kadepAttachments && $lhoReport->kadepAttachments->count() > 0)
+                    <div class="mt-2 pt-2 border-top">
+                        <small class="d-block fw-bold text-muted mb-1">Lampiran File / Foto Dokumen Kadep:</small>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach($lhoReport->kadepAttachments as $kAtt)
+                                <div style="display: inline-block; border: 1px solid #ccc; padding: 4px; border-radius: 4px; text-align: center; margin-bottom: 5px;">
+                                    @if($kAtt->isImage())
+                                        <img src="{{ asset($kAtt->file_path) }}" style="max-height: 80px; max-width: 120px; display: block; margin: 0 auto 3px;" alt="{{ $kAtt->file_label }}">
+                                    @endif
+                                    <small><strong>{{ $kAtt->file_label }}</strong> ({{ $kAtt->file_name }})</small>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 @endif
             </td>
         </tr>

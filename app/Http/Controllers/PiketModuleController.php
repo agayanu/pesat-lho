@@ -7,6 +7,7 @@ use App\Models\SchoolEvent;
 use App\Models\SpecialActivityReport;
 use App\Models\Student;
 use App\Models\StudentAbsence;
+use App\Models\StudentNote;
 use App\Models\TeacherAbsence;
 use App\Models\TeachingJournal;
 use App\Models\User;
@@ -21,22 +22,77 @@ class PiketModuleController extends Controller
     public function index(Request $request)
     {
         $date = $request->query('date', date('Y-m-d'));
+        $selectedTingkat = $request->query('tingkat');
+        $selectedClass   = $request->query('class_code');
 
-        // Summary Data Hari Ini dengan Eager Loading User ID
-        $teachingJournals = TeachingJournal::with('teacher')->where('date', $date)->orderBy('jam_ke', 'asc')->get();
-        $studentAbsences  = StudentAbsence::with('student')->where('date', $date)->orderBy('class_code', 'asc')->get();
-        $teacherAbsences  = TeacherAbsence::with(['teacher', 'substituteTeacher'])->where('date', $date)->orderBy('id', 'desc')->get();
+        $classList = Classes::orderBy('code', 'asc')->get();
+
+        // Query Dasar dengan Filter Tanggal
+        $teachingJournalsQuery = TeachingJournal::with('teacher')->where('date', $date);
+        $studentAbsencesQuery  = StudentAbsence::with('student')->where('date', $date);
+        $teacherAbsencesQuery  = TeacherAbsence::with(['teacher', 'substituteTeacher'])->where('date', $date);
+        $studentNotesQuery     = StudentNote::with(['student', 'teacher'])->where('date', $date);
+
+        // Terapkan Filter Tingkat dan Kelas
+        $this->applyClassAndTingkatFilter($teachingJournalsQuery, $selectedClass, $selectedTingkat);
+        $this->applyClassAndTingkatFilter($studentAbsencesQuery, $selectedClass, $selectedTingkat);
+        $this->applyClassAndTingkatFilter($teacherAbsencesQuery, $selectedClass, $selectedTingkat);
+        $this->applyClassAndTingkatFilter($studentNotesQuery, $selectedClass, $selectedTingkat);
+
+        $teachingJournals = $teachingJournalsQuery->orderBy('jam_ke', 'asc')->get();
+        $studentAbsences  = $studentAbsencesQuery->orderBy('class_code', 'asc')->get();
+        $teacherAbsences  = $teacherAbsencesQuery->orderBy('id', 'desc')->get();
+        $studentNotes     = $studentNotesQuery->orderBy('id', 'desc')->get();
+
         $specialReports   = SpecialActivityReport::where('date', $date)->orderBy('id', 'desc')->get();
         $schoolEvents     = SchoolEvent::where('date', $date)->orderBy('id', 'desc')->get();
 
         return view('piket.dashboard', compact(
             'date',
+            'selectedTingkat',
+            'selectedClass',
+            'classList',
             'teachingJournals',
             'studentAbsences',
             'teacherAbsences',
+            'studentNotes',
             'specialReports',
             'schoolEvents'
         ));
+    }
+
+    /**
+     * Helper untuk memfilter query berdasarkan kelas dan tingkat (10, 11, 12)
+     */
+    private function applyClassAndTingkatFilter($query, $classCode, $tingkat)
+    {
+        if (!empty($classCode)) {
+            $query->where('class_code', $classCode);
+        } elseif (!empty($tingkat)) {
+            if ($tingkat == '10') {
+                $query->where(function ($q) {
+                    $q->where('class_code', 'like', 'X.%')
+                      ->orWhere('class_code', 'like', 'X-%')
+                      ->orWhere('class_code', 'like', 'X %')
+                      ->orWhere('class_code', 'like', '10%');
+                })->where('class_code', 'not like', 'XI%');
+            } elseif ($tingkat == '11') {
+                $query->where(function ($q) {
+                    $q->where('class_code', 'like', 'XI.%')
+                      ->orWhere('class_code', 'like', 'XI-%')
+                      ->orWhere('class_code', 'like', 'XI %')
+                      ->orWhere('class_code', 'like', '11%');
+                })->where('class_code', 'not like', 'XII%');
+            } elseif ($tingkat == '12') {
+                $query->where(function ($q) {
+                    $q->where('class_code', 'like', 'XII.%')
+                      ->orWhere('class_code', 'like', 'XII-%')
+                      ->orWhere('class_code', 'like', 'XII %')
+                      ->orWhere('class_code', 'like', '12%');
+                });
+            }
+        }
+        return $query;
     }
 
     /**
@@ -128,12 +184,17 @@ class PiketModuleController extends Controller
             'teacher_id'            => 'required|exists:users,id',
             'class_code'            => 'required|string',
             'status'                => 'required|in:Izin,Sakit,Dinas,Alpha',
+            'from_jam_ke'           => 'required|integer|min:1|max:12',
+            'to_jam_ke'             => 'required|integer|min:1|max:12|gte:from_jam_ke',
             'substitute_teacher_id' => 'nullable|exists:users,id',
             'task_description'      => 'nullable|string',
         ], [
-            'teacher_id.required' => 'Guru tidak hadir wajib dipilih',
-            'class_code.required' => 'Kelas wajib dipilih',
-            'status.required'     => 'Status ketidakhadiran wajib dipilih',
+            'teacher_id.required'   => 'Guru tidak hadir wajib dipilih',
+            'class_code.required'   => 'Kelas wajib dipilih',
+            'status.required'       => 'Status ketidakhadiran wajib dipilih',
+            'from_jam_ke.required'  => 'Dari Jam Ke- wajib dipilih',
+            'to_jam_ke.required'    => 'Sampai Jam Ke- wajib dipilih',
+            'to_jam_ke.gte'         => 'Sampai Jam Ke- harus sama atau lebih besar dari Dari Jam Ke-',
         ]);
 
         $absentUser = User::find($request->teacher_id);
@@ -145,6 +206,8 @@ class PiketModuleController extends Controller
             'teacher_name'          => $absentUser->name ?? '',
             'class_code'            => $request->class_code,
             'status'                => $request->status,
+            'from_jam_ke'           => $request->from_jam_ke,
+            'to_jam_ke'             => $request->to_jam_ke,
             'substitute_teacher_id' => $request->substitute_teacher_id,
             'substitute_teacher'    => $substituteUser->name ?? null,
             'task_description'      => $request->task_description,
@@ -152,6 +215,54 @@ class PiketModuleController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Data presensi guru tidak hadir berhasil disimpan');
+    }
+
+    /**
+     * Action Edit Catatan Siswa oleh Guru Piket
+     */
+    public function updateStudentNote(Request $request, $id)
+    {
+        if (!Auth::user()->hasPosition('Guru Piket') && !Auth::user()->hasPosition('Piket') && Auth::user()->position != 1) {
+            abort(403, 'Hanya Guru Piket yang dapat mengubah catatan siswa.');
+        }
+
+        $note = StudentNote::findOrFail($id);
+
+        $request->validate([
+            'note'        => 'required|string',
+            'edit_reason' => 'required|string|max:255',
+        ], [
+            'note.required'        => 'Isi catatan siswa wajib diisi',
+            'edit_reason.required' => 'Alasan perubahan catatan wajib diisi oleh Guru Piket',
+        ]);
+
+        $note->update([
+            'note'                => $request->note,
+            'is_edited_by_piket'  => true,
+            'piket_user'          => Auth::user()->name ?? 'Guru Piket',
+            'edit_reason'         => $request->edit_reason,
+        ]);
+
+        return redirect()->back()->with('success', 'Catatan siswa berhasil diperbarui oleh Guru Piket');
+    }
+
+    /**
+     * Action Hapus Catatan Siswa oleh Guru Piket
+     */
+    public function destroyStudentNote(Request $request, $id)
+    {
+        if (!Auth::user()->hasPosition('Guru Piket') && !Auth::user()->hasPosition('Piket') && Auth::user()->position != 1) {
+            abort(403, 'Hanya Guru Piket yang dapat menghapus catatan siswa.');
+        }
+
+        $note = StudentNote::findOrFail($id);
+        $note->update([
+            'piket_user'  => Auth::user()->name ?? 'Guru Piket',
+            'edit_reason' => $request->edit_reason ?? 'Dihapus oleh Guru Piket',
+        ]);
+        $note->delete();
+
+        return redirect()->back()->with('success', 'Catatan siswa berhasil dihapus oleh Guru Piket');
     }
 
     public function destroyTeacherAbsence($id)

@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('teaching', [TeachingModuleController::class, 'index'])->name('teaching.index');
     Route::post('teaching', [TeachingModuleController::class, 'store'])->name('teaching.store');
     Route::get('teaching/history', [TeachingModuleController::class, 'history'])->name('teaching.history');
+    Route::post('teaching/student-notes', [TeachingModuleController::class, 'storeStudentNote'])->name('teaching.student-notes.store');
 
     // Modul Wali Kelas (Monitoring Kelas Binaan - ReadOnly)
     Route::get('walikelas/dashboard', [WaliKelasController::class, 'index'])->name('walikelas.dashboard');
@@ -42,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('piket/dashboard', [PiketModuleController::class, 'index'])->name('piket.dashboard');
     Route::get('piket/student-absences', [PiketModuleController::class, 'studentAbsences'])->name('piket.student-absences');
     Route::put('piket/student-absences/{id}', [PiketModuleController::class, 'updateStudentAbsence'])->name('piket.student-absences.update');
+    Route::put('piket/student-notes/{id}', [PiketModuleController::class, 'updateStudentNote'])->name('piket.student-notes.update');
+    Route::delete('piket/student-notes/{id}', [PiketModuleController::class, 'destroyStudentNote'])->name('piket.student-notes.destroy');
     
     Route::get('piket/teacher-absences', [PiketModuleController::class, 'teacherAbsences'])->name('piket.teacher-absences');
     Route::post('piket/teacher-absences', [PiketModuleController::class, 'storeTeacherAbsence'])->name('piket.teacher-absences.store');
@@ -67,6 +70,9 @@ Route::middleware(['auth'])->group(function () {
     // Modul Kepala Sekolah
     Route::get('kepsek/dashboard', [KepsekModuleController::class, 'index'])->name('kepsek.dashboard');
     Route::post('kepsek/notes', [KepsekModuleController::class, 'storeNotes'])->name('kepsek.notes.store');
+
+    // Pengelolaan Lampiran Dokumen LHO
+    Route::delete('lho/attachments/{id}', [PhModuleController::class, 'destroyAttachment'])->name('lho.attachments.destroy');
 
     // Cetak / Ekspor LHO
     Route::get('lho/print', [LhoPrintController::class, 'print'])->name('lho.print');

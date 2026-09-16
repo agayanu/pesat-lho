@@ -6,6 +6,7 @@ use App\Models\DailyLhoReport;
 use App\Models\SchoolEvent;
 use App\Models\SpecialActivityReport;
 use App\Models\StudentAbsence;
+use App\Models\StudentNote;
 use App\Models\TeacherAbsence;
 use App\Models\TeachingJournal;
 use Illuminate\Http\Request;
@@ -16,11 +17,12 @@ class LhoPrintController extends Controller
     {
         $date = $request->query('date', date('Y-m-d'));
 
-        $lhoReport = DailyLhoReport::where('date', $date)->first();
+        $lhoReport = DailyLhoReport::with('attachments')->where('date', $date)->first();
 
         $teachingJournals = TeachingJournal::with('teacher')->where('date', $date)->orderBy('jam_ke', 'asc')->get();
         $studentAbsences  = StudentAbsence::with('student')->where('date', $date)->orderBy('class_code', 'asc')->get();
         $teacherAbsences  = TeacherAbsence::with(['teacher', 'substituteTeacher'])->where('date', $date)->orderBy('id', 'desc')->get();
+        $studentNotes     = StudentNote::with(['student', 'teacher'])->where('date', $date)->orderBy('jam_ke', 'asc')->get();
         $specialReports   = SpecialActivityReport::where('date', $date)->orderBy('id', 'desc')->get();
         $schoolEvents     = SchoolEvent::where('date', $date)->orderBy('id', 'desc')->get();
 
@@ -30,6 +32,7 @@ class LhoPrintController extends Controller
             'teachingJournals',
             'studentAbsences',
             'teacherAbsences',
+            'studentNotes',
             'specialReports',
             'schoolEvents'
         ));
