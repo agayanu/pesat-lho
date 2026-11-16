@@ -158,6 +158,15 @@
                     </a>
                 </li>
             @endif
+
+            <!-- Pengaturan Akun (Untuk Semua User) -->
+            <li class="menu-label">PENGATURAN AKUN</li>
+            <li {{ Request::is('profile/password*') ? 'class="mm-active"' : '' }}>
+                <a href="{{ route('password.change') }}">
+                    <div class="parent-icon"><i class="material-icons-outlined">lock_reset</i></div>
+                    <div class="menu-title">Ubah Password</div>
+                </a>
+            </li>
         </ul>
     </div>
     <div class="sidebar-bottom gap-4">

@@ -15,6 +15,7 @@ use App\Http\Controllers\PhModuleController;
 use App\Http\Controllers\KadepModuleController;
 use App\Http\Controllers\KepsekModuleController;
 use App\Http\Controllers\LhoPrintController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', [AuthController::class, 'showFormLogin'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
@@ -29,6 +30,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('classes', ClassController::class)->except(['create', 'edit', 'show']);
     Route::resource('students', StudentController::class)->except(['create', 'edit', 'show']);
     Route::resource('users', UserController::class)->except(['create', 'edit', 'show']);
+    Route::post('users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
+
+    // Profil & Ubah Password Sendiri (Setiap User)
+    Route::get('profile/password', [ProfileController::class, 'showChangePassword'])->name('password.change');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
 
     // Modul Guru Kelas (Presensi & Jurnal KBM)
     Route::get('teaching', [TeachingModuleController::class, 'index'])->name('teaching.index');

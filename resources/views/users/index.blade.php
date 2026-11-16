@@ -57,7 +57,7 @@
                         <th>L/P</th>
                         <th>Jabatan / Posisi (Bisa Lebih Dari 1)</th>
                         <th>Admin Input</th>
-                        <th style="width: 130px;" class="text-center">Aksi</th>
+                        <th style="width: 150px;" class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,16 +78,24 @@
                             </td>
                             <td><small class="text-muted">{{ $u->user }}</small></td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $u->id }}">
-                                    <i class="material-icons-outlined">edit</i>
-                                </button>
-                                <form action="{{ route('users.destroy', $u->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="material-icons-outlined">delete</i>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $u->id }}" title="Edit Data User">
+                                        <i class="material-icons-outlined">edit</i>
                                     </button>
-                                </form>
+                                    <form action="{{ route('users.reset-password', $u->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin me-reset password user \'{{ $u->name }}\' menjadi default: 123456?')">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-info text-white" title="Reset Password ke Default (123456)">
+                                            <i class="material-icons-outlined">lock_reset</i>
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('users.destroy', $u->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Hapus User">
+                                            <i class="material-icons-outlined">delete</i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -129,6 +137,7 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Password Baru (Kosongkan jika tidak diubah)</label>
                                 <input type="password" name="password" class="form-control" placeholder="••••••••">
+                                <small class="text-muted d-block mt-1">Kosongkan jika tidak ingin mengubah password user.</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Jenis Kelamin <span class="text-danger">*</span></label>
@@ -160,10 +169,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-warning">Simpan Perubahan</button>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-info" onclick="if(confirm('Reset password user {{ $u->name }} menjadi default: 123456?')) document.getElementById('reset-form-modal-{{ $u->id }}').submit();">
+                            <i class="material-icons-outlined align-middle fs-6">lock_reset</i> Reset Default (123456)
+                        </button>
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-warning">Simpan Perubahan</button>
+                        </div>
                     </div>
+                </form>
+                <form id="reset-form-modal-{{ $u->id }}" action="{{ route('users.reset-password', $u->id) }}" method="POST" style="display:none;">
+                    @csrf
                 </form>
             </div>
         </div>

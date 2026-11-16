@@ -113,4 +113,21 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'Data User berhasil dihapus');
     }
+
+    /**
+     * Reset user password to default (123456) - Only for Administrator
+     */
+    public function resetPassword($id)
+    {
+        if (Auth::user()->position != 1 && !Auth::user()->hasPosition('Administrator')) {
+            abort(403, 'Akses ditolak. Hanya Administrator yang dapat me-reset password.');
+        }
+
+        $user = User::findOrFail($id);
+        $user->update([
+            'password' => Hash::make('123456'),
+        ]);
+
+        return redirect()->route('users.index')->with('success', "Password user '{$user->name}' ({$user->username}) berhasil di-reset ke default: 123456");
+    }
 }
