@@ -145,7 +145,7 @@
                         <div class="mb-3">
                             <label class="form-label">Program</label>
                             <select name="program" class="form-select" required>
-                                <option value="Pioneer" {{ $std->program == 'Pioneer' ? 'selected' : '' }}>Pioneer</option>
+                                <option value="Internasional" {{ $std->program == 'Internasional' ? 'selected' : '' }}>Internasional</option>
                                 <option value="Unggulan" {{ $std->program == 'Unggulan' ? 'selected' : '' }}>Unggulan</option>
                                 <option value="Reguler" {{ $std->program == 'Reguler' ? 'selected' : '' }}>Reguler</option>
                             </select>
@@ -204,7 +204,7 @@
                     <div class="mb-3">
                         <label class="form-label">Program</label>
                         <select name="program" class="form-select" required>
-                            <option value="Pioneer">Pioneer</option>
+                            <option value="Internasional">Internasional</option>
                             <option value="Unggulan">Unggulan</option>
                             <option value="Reguler">Reguler</option>
                         </select>

@@ -30,7 +30,7 @@ class ClassController extends Controller
         $request->validate([
             'code'     => 'required|string|max:100|unique:classes,code',
             'homeroom' => 'required|exists:users,id',
-            'school'   => 'required|in:Unggulan,Reguler',
+            'school'   => 'required|in:SMAS,Reguler',
         ], [
             'code.required'     => 'Kode/Nama kelas wajib diisi',
             'code.unique'       => 'Kode/Nama kelas sudah ada',
@@ -55,7 +55,7 @@ class ClassController extends Controller
         $request->validate([
             'code'     => 'required|string|max:100|unique:classes,code,' . $id,
             'homeroom' => 'required|exists:users,id',
-            'school'   => 'required|in:Unggulan,Reguler',
+            'school'   => 'required|in:SMAS,Reguler',
         ], [
             'code.required'     => 'Kode/Nama kelas wajib diisi',
             'code.unique'       => 'Kode/Nama kelas sudah ada',

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('code');
             $table->integer('homeroom'); // References users.id
             $table->enum('program', ['INTERNASIONAL', 'UNGGULAN', 'REGULER']);
-            $table->enum('school', ['Unggulan', 'Reguler']);
+            $table->enum('school', ['SMAS', 'Reguler']);
             $table->string('user');
             $table->timestamps();
             $table->timestamp('deleted_at')->nullable();

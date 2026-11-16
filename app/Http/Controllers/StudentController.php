@@ -33,7 +33,7 @@ class StudentController extends Controller
             'name'       => 'required|string|max:255',
             'gender'     => 'required|in:L,P',
             'classes'    => 'required|string|max:100',
-            'program'    => 'required|in:Pioneer,Unggulan,Reguler',
+            'program'    => 'required|in:Internasional,Unggulan,Reguler',
             'studentday' => 'nullable|string|max:255',
         ], [
             'id_siswa.required' => 'ID/NIS Siswa wajib diisi',
@@ -66,7 +66,7 @@ class StudentController extends Controller
             'name'       => 'required|string|max:255',
             'gender'     => 'required|in:L,P',
             'classes'    => 'required|string|max:100',
-            'program'    => 'required|in:Pioneer,Unggulan,Reguler',
+            'program'    => 'required|in:Internasional,Unggulan,Reguler',
             'studentday' => 'nullable|string|max:255',
         ], [
             'id_siswa.required' => 'ID/NIS Siswa wajib diisi',

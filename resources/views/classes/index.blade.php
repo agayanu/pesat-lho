@@ -63,7 +63,7 @@
                             <td><strong class="text-primary">{{ $cls->code }}</strong></td>
                             <td>{{ $cls->homeroomTeacher->name ?? '-' }}</td>
                             <td>
-                                <span class="badge {{ $cls->school == 'Unggulan' ? 'bg-success' : 'bg-info' }}">
+                                <span class="badge {{ $cls->school == 'SMAS' ? 'bg-success' : 'bg-info' }}">
                                     {{ $cls->school }}
                                 </span>
                             </td>
@@ -126,7 +126,7 @@
                         <div class="mb-3">
                             <label class="form-label">Kategori Sekolah</label>
                             <select name="school" class="form-select" required>
-                                <option value="Unggulan" {{ $cls->school == 'Unggulan' ? 'selected' : '' }}>Unggulan</option>
+                                <option value="SMAS" {{ $cls->school == 'SMAS' ? 'selected' : '' }}>SMAS</option>
                                 <option value="Reguler" {{ $cls->school == 'Reguler' ? 'selected' : '' }}>Reguler</option>
                             </select>
                         </div>
@@ -168,7 +168,7 @@
                     <div class="mb-3">
                         <label class="form-label">Kategori Sekolah</label>
                         <select name="school" class="form-select" required>
-                            <option value="Unggulan">Unggulan</option>
+                            <option value="SMAS">SMAS</option>
                             <option value="Reguler">Reguler</option>
                         </select>
                     </div>
