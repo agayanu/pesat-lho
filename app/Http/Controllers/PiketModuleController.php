@@ -186,8 +186,9 @@ class PiketModuleController extends Controller
             'status'                => 'required|in:Izin,Sakit,Dinas,Alpha',
             'from_jam_ke'           => 'required|integer|min:1|max:12',
             'to_jam_ke'             => 'required|integer|min:1|max:12|gte:from_jam_ke',
-            'substitute_teacher_id' => 'nullable|exists:users,id',
-            'task_description'      => 'nullable|string',
+            'substitute_teacher_id'        => 'nullable|exists:users,id',
+            'external_substitute_teacher'  => 'nullable|string|max:255',
+            'task_description'             => 'nullable|string',
         ], [
             'teacher_id.required'   => 'Guru tidak hadir wajib dipilih',
             'class_code.required'   => 'Kelas wajib dipilih',
@@ -199,19 +200,22 @@ class PiketModuleController extends Controller
 
         $absentUser = User::find($request->teacher_id);
         $substituteUser = $request->substitute_teacher_id ? User::find($request->substitute_teacher_id) : null;
+        $externalSub = $request->external_substitute_teacher ? trim($request->external_substitute_teacher) : null;
+        $substituteName = $substituteUser ? $substituteUser->name : $externalSub;
 
         TeacherAbsence::create([
-            'date'                  => $request->date,
-            'teacher_id'            => $request->teacher_id,
-            'teacher_name'          => $absentUser->name ?? '',
-            'class_code'            => $request->class_code,
-            'status'                => $request->status,
-            'from_jam_ke'           => $request->from_jam_ke,
-            'to_jam_ke'             => $request->to_jam_ke,
-            'substitute_teacher_id' => $request->substitute_teacher_id,
-            'substitute_teacher'    => $substituteUser->name ?? null,
-            'task_description'      => $request->task_description,
-            'piket_user'            => Auth::user()->name ?? 'Guru Piket',
+            'date'                         => $request->date,
+            'teacher_id'                   => $request->teacher_id,
+            'teacher_name'                 => $absentUser->name ?? '',
+            'class_code'                   => $request->class_code,
+            'status'                       => $request->status,
+            'from_jam_ke'                  => $request->from_jam_ke,
+            'to_jam_ke'                    => $request->to_jam_ke,
+            'substitute_teacher_id'        => $request->substitute_teacher_id,
+            'substitute_teacher'           => $substituteName,
+            'external_substitute_teacher'  => $externalSub,
+            'task_description'             => $request->task_description,
+            'piket_user'                   => Auth::user()->name ?? 'Guru Piket',
         ]);
 
         return redirect()->back()->with('success', 'Data presensi guru tidak hadir berhasil disimpan');

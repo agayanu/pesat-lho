@@ -19,6 +19,7 @@ class TeacherAbsence extends Model
         'status',
         'substitute_teacher_id',
         'substitute_teacher',
+        'external_substitute_teacher',
         'task_description',
         'from_jam_ke',
         'to_jam_ke',
@@ -57,6 +58,12 @@ class TeacherAbsence extends Model
 
     public function getSubstituteDisplayNameAttribute()
     {
-        return $this->substituteTeacher->name ?? $this->substitute_teacher ?? null;
+        if ($this->substituteTeacher) {
+            return $this->substituteTeacher->name;
+        }
+        if (!empty($this->external_substitute_teacher)) {
+            return $this->external_substitute_teacher . ' (Eksternal)';
+        }
+        return $this->substitute_teacher ?? null;
     }
 }

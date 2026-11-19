@@ -16,6 +16,8 @@ use App\Http\Controllers\KadepModuleController;
 use App\Http\Controllers\KepsekModuleController;
 use App\Http\Controllers\LhoPrintController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GraduatedStudentController;
+use App\Http\Controllers\ExitedStudentController;
 
 Route::get('/', [AuthController::class, 'showFormLogin'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
@@ -28,7 +30,27 @@ Route::middleware(['auth'])->group(function () {
     // Master Data Routes
     Route::resource('positions', PositionController::class)->except(['create', 'edit', 'show']);
     Route::resource('classes', ClassController::class)->except(['create', 'edit', 'show']);
+    
+    // Data Siswa & Upload Template Excel
+    Route::get('students/template', [StudentController::class, 'downloadTemplate'])->name('students.template');
+    Route::post('students/import', [StudentController::class, 'import'])->name('students.import');
     Route::resource('students', StudentController::class)->except(['create', 'edit', 'show']);
+
+    // Siswa Lulus
+    Route::get('graduated-students', [GraduatedStudentController::class, 'index'])->name('graduated-students.index');
+    Route::get('graduated-students/get-students-by-class', [GraduatedStudentController::class, 'getStudentsByClass'])->name('graduated-students.get-students-by-class');
+    Route::post('graduated-students/by-classes', [GraduatedStudentController::class, 'storeByClasses'])->name('graduated-students.store-by-classes');
+    Route::post('graduated-students/by-students', [GraduatedStudentController::class, 'storeByStudents'])->name('graduated-students.store-by-students');
+    Route::post('graduated-students/{id}/restore', [GraduatedStudentController::class, 'restore'])->name('graduated-students.restore');
+    Route::delete('graduated-students/{id}', [GraduatedStudentController::class, 'destroy'])->name('graduated-students.destroy');
+
+    // Siswa Keluar
+    Route::get('exited-students', [ExitedStudentController::class, 'index'])->name('exited-students.index');
+    Route::get('exited-students/search-students', [ExitedStudentController::class, 'searchActiveStudents'])->name('exited-students.search-students');
+    Route::post('exited-students', [ExitedStudentController::class, 'store'])->name('exited-students.store');
+    Route::post('exited-students/{id}/restore', [ExitedStudentController::class, 'restore'])->name('exited-students.restore');
+    Route::delete('exited-students/{id}', [ExitedStudentController::class, 'destroy'])->name('exited-students.destroy');
+
     Route::resource('users', UserController::class)->except(['create', 'edit', 'show']);
     Route::post('users/{id}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
 

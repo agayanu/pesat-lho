@@ -120,10 +120,10 @@
                 </li>
             @endif
 
-            @if(Auth::user()->hasPosition('Guru Piket') || Auth::user()->hasPosition('Piket') || Auth::user()->hasPosition('PH') || Auth::user()->hasPosition('Penanggung Jawab Harian') || Auth::user()->hasPosition('Kepala Departemen') || Auth::user()->hasPosition('Kadep') || Auth::user()->hasPosition('Kepala Sekolah') || Auth::user()->hasPosition('Kepsek'))
+            @if(Auth::user()->hasPosition('Guru Piket') || Auth::user()->hasPosition('Piket') || Auth::user()->hasPosition('PH') || Auth::user()->hasPosition('Penanggung Jawab Harian') || Auth::user()->hasPosition('Kepala Departemen') || Auth::user()->hasPosition('Kadep') || Auth::user()->hasPosition('Kepala Sekolah') || Auth::user()->hasPosition('Kepsek') || Auth::user()->position == 1 || Auth::user()->hasPosition('Administrator'))
                 <li class="menu-label">CETAK LAPORAN</li>
                 <li>
-                    <a href="{{ route('lho.print') }}" target="_blank">
+                    <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#modalFilterCetakLHO">
                         <div class="parent-icon"><i class="material-icons-outlined">print</i></div>
                         <div class="menu-title">Cetak LHO Terpadu</div>
                     </a>
@@ -149,6 +149,18 @@
                     <a href="{{ route('students.index') }}">
                         <div class="parent-icon"><i class="material-icons-outlined">groups</i></div>
                         <div class="menu-title">Data Siswa</div>
+                    </a>
+                </li>
+                <li {{ Request::is('graduated-students*') ? 'class="mm-active"' : '' }}>
+                    <a href="{{ route('graduated-students.index') }}">
+                        <div class="parent-icon"><i class="material-icons-outlined">school</i></div>
+                        <div class="menu-title">Siswa Lulus</div>
+                    </a>
+                </li>
+                <li {{ Request::is('exited-students*') ? 'class="mm-active"' : '' }}>
+                    <a href="{{ route('exited-students.index') }}">
+                        <div class="parent-icon"><i class="material-icons-outlined">person_remove</i></div>
+                        <div class="menu-title">Siswa Keluar</div>
                     </a>
                 </li>
                 <li {{ Request::is('users*') ? 'class="mm-active"' : '' }}>

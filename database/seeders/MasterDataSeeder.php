@@ -24,6 +24,8 @@ class MasterDataSeeder extends Seeder
             6 => 'PH (Penanggung Jawab Harian)',
             7 => 'Kepala Departemen',
             8 => 'Kepala Sekolah',
+            9 => 'Guru Studentday',
+            10 => 'Guru Ekstrakurikuler',
         ];
 
         foreach ($positions as $id => $name) {

@@ -26,4 +26,14 @@ class Student extends Model
     {
         return $this->hasMany(StudentNote::class, 'student_id');
     }
+
+    public function studentdayRef()
+    {
+        return $this->belongsTo(Studentday::class, 'studentday');
+    }
+
+    public function getStudentdayNameAttribute()
+    {
+        return $this->studentdayRef->name ?? $this->studentday ?? '-';
+    }
 }

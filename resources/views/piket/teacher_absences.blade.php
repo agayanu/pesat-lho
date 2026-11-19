@@ -89,15 +89,20 @@
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Guru Pengganti (Jika Ada)</label>
+                    <label class="form-label fw-bold">Guru Pengganti Internal</label>
                     <select name="substitute_teacher_id" class="form-select">
-                        <option value="">-- Pilih Guru Pengganti (Opsional) --</option>
+                        <option value="">-- Pilih Guru Pengganti Internal (Opsional) --</option>
                         @foreach($teachers as $t)
                             <option value="{{ $t->id }}">{{ $t->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-md-6">
+                    <label class="form-label fw-bold">Guru Pengganti Eksternal (Jika Ada)</label>
+                    <input type="text" name="external_substitute_teacher" class="form-control" placeholder="Ketik nama guru pengganti eksternal..." value="{{ old('external_substitute_teacher') }}">
+                    <small class="text-muted">Opsional (type text). Isi apabila nama guru pengganti tidak ada di database.</small>
+                </div>
+                <div class="col-md-12">
                     <label class="form-label fw-bold">Tugas Kelas (Jika Tidak Ada Guru Pengganti)</label>
                     <input type="text" name="task_description" class="form-control" placeholder="Contoh: Kerjakan Modul Bab 3 Hal 45-50">
                 </div>
@@ -140,8 +145,12 @@
                             <td><strong>{{ $ta->class_code }}</strong></td>
                             <td><span class="badge bg-warning text-dark">{{ $ta->status }}</span></td>
                             <td>
-                                @if($ta->substituteTeacher || $ta->substitute_teacher)
-                                    <span class="badge bg-success fs-6">{{ $ta->substituteTeacher->name ?? $ta->substitute_teacher }}</span>
+                                @if($ta->substituteTeacher)
+                                    <span class="badge bg-success fs-6">{{ $ta->substituteTeacher->name }}</span>
+                                @elseif($ta->external_substitute_teacher)
+                                    <span class="badge bg-info text-dark fs-6">{{ $ta->external_substitute_teacher }} <span class="badge bg-dark ms-1">Eksternal</span></span>
+                                @elseif($ta->substitute_teacher)
+                                    <span class="badge bg-success fs-6">{{ $ta->substitute_teacher }}</span>
                                 @else
                                     <span class="badge bg-secondary">Tidak Ada Pengganti</span>
                                 @endif

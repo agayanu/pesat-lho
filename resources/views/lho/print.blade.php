@@ -79,13 +79,34 @@
 </head>
 <body>
 
-<div class="container text-center mt-3 no-print">
-    <button onclick="window.print()" class="btn btn-primary btn-lg shadow">
-        <i class="bx bx-printer"></i> Cetak / Simpan PDF Dokumen Ini
-    </button>
-    <button onclick="window.close()" class="btn btn-secondary btn-lg ms-2">
-        Tutup
-    </button>
+<div class="container mt-3 no-print">
+    <div class="card p-3 shadow-sm border-0 bg-white">
+        <form action="{{ route('lho.print') }}" method="GET" class="row g-2 align-items-center justify-content-center">
+            <div class="col-auto">
+                <label class="fw-bold me-1">Tanggal:</label>
+                <input type="date" name="date" class="form-control d-inline-block w-auto" value="{{ $date }}">
+            </div>
+            <div class="col-auto">
+                <label class="fw-bold me-1">Sekolah:</label>
+                <select name="school" class="form-select d-inline-block w-auto">
+                    <option value="" {{ empty($school) ? 'selected' : '' }}>--Semua Sekolah-- (SMAS & Reguler)</option>
+                    <option value="SMAS" {{ ($school ?? '') == 'SMAS' ? 'selected' : '' }}>SMAS</option>
+                    <option value="Reguler" {{ ($school ?? '') == 'Reguler' ? 'selected' : '' }}>Reguler</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bx bx-filter-alt"></i> Tampilkan
+                </button>
+                <button type="button" onclick="window.print()" class="btn btn-success ms-1">
+                    <i class="bx bx-printer"></i> Cetak / PDF
+                </button>
+                <button type="button" onclick="window.close()" class="btn btn-secondary ms-1">
+                    Tutup
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <div class="paper">
@@ -93,7 +114,10 @@
     <div class="header-title">
         <h3>LAPORAN HARIAN OPERASIONAL (LHO)</h3>
         <h5>SMA PLUS PGRI CIBINONG</h5>
-        <p class="mb-0 text-muted">Tanggal Pelaporan: <strong>{{ \Carbon\Carbon::parse($date)->locale('id')->translatedFormat('l, d F Y') }}</strong></p>
+        <p class="mb-0 text-muted">
+            Tanggal Pelaporan: <strong>{{ \Carbon\Carbon::parse($date)->locale('id')->translatedFormat('l, d F Y') }}</strong>
+            | Kategori: <strong>{{ empty($school) ? 'Semua Sekolah (SMAS & Reguler)' : 'Sekolah ' . $school }}</strong>
+        </p>
     </div>
 
     <!-- 1. Presensi Siswa Tidak Hadir -->

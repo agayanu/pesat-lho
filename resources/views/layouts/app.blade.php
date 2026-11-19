@@ -139,6 +139,44 @@
 <script src="{{ asset('metoxi/plugins/metismenu/metisMenu.min.js') }}"></script>
 <script src="{{ asset('metoxi/plugins/simplebar/js/simplebar.min.js') }}"></script>
 <script src="{{ asset('metoxi/js/main.js') }}"></script>
+<!-- Modal Filter Cetak LHO Terpadu -->
+<div class="modal fade" id="modalFilterCetakLHO" tabindex="-1" aria-labelledby="modalFilterCetakLHOLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="{{ route('lho.print') }}" method="GET" target="_blank" onsubmit="$('#modalFilterCetakLHO').modal('hide');">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title text-white" id="modalFilterCetakLHOLabel">
+                        <i class="material-icons-outlined align-middle me-1">print</i> Cetak LHO Terpadu
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pilih Tanggal Laporan <span class="text-danger">*</span></label>
+                        <input type="date" name="date" class="form-control form-control-lg" value="{{ date('Y-m-d') }}" required>
+                        <small class="text-muted">Pilih tanggal laporan yang akan dicetak.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pilih Kategori Sekolah <span class="text-danger">*</span></label>
+                        <select name="school" class="form-select form-select-lg">
+                            <option value="">--Semua Sekolah-- (menampilkan data laporan SMAS dan Reguler)</option>
+                            <option value="SMAS">SMAS (menampilkan data laporan SMAS)</option>
+                            <option value="Reguler">Reguler (menampilkan data laporan Reguler)</option>
+                        </select>
+                        <small class="text-muted">Pilih cakupan data sekolah yang ingin ditampilkan.</small>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="material-icons-outlined align-middle me-1">open_in_new</i> Buka Dokumen Cetak
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @yield('scripts')
 </body>
 </html>
