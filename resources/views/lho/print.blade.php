@@ -112,11 +112,14 @@
 <div class="paper">
     <!-- Header Dokumen -->
     <div class="header-title">
-        <h3>LAPORAN HARIAN OPERASIONAL (LHO)</h3>
-        <h5>SMA PLUS PGRI CIBINONG</h5>
+        <h3>LAPORAN HARIAN OPERASIONAL</h3>
+        @if($school == 'Reguler')
+            <h5>SMA PLUS PGRI CIBINONG REGULER</h5>
+        @else
+            <h5>SMA PLUS PGRI CIBINONG</h5>
+        @endif
         <p class="mb-0 text-muted">
             Tanggal Pelaporan: <strong>{{ \Carbon\Carbon::parse($date)->locale('id')->translatedFormat('l, d F Y') }}</strong>
-            | Kategori: <strong>{{ empty($school) ? 'Semua Sekolah (SMAS & Reguler)' : 'Sekolah ' . $school }}</strong>
         </p>
     </div>
 
@@ -330,7 +333,7 @@
     <table class="table-print">
         <tr>
             <th style="width: 25%;">Peran</th>
-            <th style="width: 25%;">Nama Penanggung Jawab</th>
+            <th style="width: 27%;">Nama Penanggung Jawab</th>
             <th>Catatan Pengawasan Teks, Coretan Tulis Tangan, & Lampiran File/Foto</th>
         </tr>
         <tr>
@@ -397,9 +400,17 @@
         </tr>
         <tr>
             <td><strong>3. Kepala Sekolah</strong></td>
-            <td>{{ $lhoReport->kepsek_user ?? '-' }}</td>
+            @if(empty($lhoReport->kepsek_user))
+                @if($school == 'Reguler')
+                    <td>Afra Fitriani, S.S., S.Pd., M.Pd., Gr.</td>
+                @else
+                    <td>Dr. Iwan Cakrayana, S.T., S.Pd., M.Si., Gr.</td>
+                @endif
+            @else
+                <td>{{ $lhoReport->kepsek_user ?? '-' }}</td>
+            @endif
             <td>
-                <div>{{ $lhoReport->kepsek_notes ?? 'Belum mengisi catatan.' }}</div>
+                <div>{{ $lhoReport->kepsek_notes ?? '-' }}</div>
                 @if($lhoReport?->kepsek_handwriting_img)
                     <div class="mt-2">
                         <small class="d-block text-muted">Catatan Tulis Tangan Tablet Kepsek:</small>
@@ -417,25 +428,36 @@
     <div class="signature-box">
         <table style="width: 100%; border: none; text-align: center;">
             <tr style="border: none;">
-                <td style="width: 25%; border: none;">
-                    Mengetahui,<br><strong>Kepala Sekolah</strong>
-                    <br><br><br><br>
-                    <u><strong>{{ $lhoReport->kepsek_user ?? '(..........................)' }}</strong></u>
-                </td>
-                <td style="width: 25%; border: none;">
-                    Meninjau,<br><strong>Kepala Departemen</strong>
-                    <br><br><br><br>
-                    <u><strong>{{ $lhoReport->kadep_user ?? '(..........................)' }}</strong></u>
-                </td>
-                <td style="width: 25%; border: none;">
+                <td style="width: 50%; border: none;">
                     Penanggung Jawab,<br><strong>PH (PJ Harian)</strong>
                     <br><br><br><br>
-                    <u><strong>{{ $lhoReport->ph_user ?? '(..........................)' }}</strong></u>
+                    <strong>(<u>{{ $lhoReport->ph_user ?? '..........................' }}</u>)</strong>
                 </td>
-                <td style="width: 25%; border: none;">
+                <td style="width: 50%; border: none;">
                     Petugas,<br><strong>Guru Piket</strong>
                     <br><br><br><br>
-                    <u><strong>(..........................)</strong></u>
+                    <strong>(<u>..........................</u>)</strong>
+                </td>
+            </tr>
+            <tr style="height: 15px;"></tr>
+            <tr style="border: none;">
+                <td style="width: 50%; border: none;">
+                    Mengetahui,<br><strong>Kepala Sekolah</strong>
+                    <br><br><br><br>
+                    @if(empty($lhoReport->kepsek_user))
+                        @if($school == 'Reguler')
+                            <strong>(<u>Afra Fitriani, S.S., S.Pd., M.Pd., Gr.</u>)</strong>
+                        @else
+                            <strong>(<u>Dr. Iwan Cakrayana, S.T., S.Pd., M.Si., Gr.</u>)</strong>
+                        @endif
+                    @else
+                    <strong>(<u>{{ $lhoReport->kepsek_user }}</u>)</strong>
+                    @endif
+                </td>
+                <td style="width: 50%; border: none;">
+                    Meninjau,<br><strong>Kepala Departemen</strong>
+                    <br><br><br><br>
+                    <strong>(<u>{{ $lhoReport->kadep_user ?? '..........................' }}</u>)</strong>
                 </td>
             </tr>
         </table>
