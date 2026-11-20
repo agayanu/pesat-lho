@@ -32,6 +32,11 @@ class Student extends Model
         return $this->belongsTo(Studentday::class, 'studentday');
     }
 
+    public function studentdayExitedHistories()
+    {
+        return $this->hasMany(StudentdayExitedStudent::class, 'student_id');
+    }
+
     public function getStudentdayNameAttribute()
     {
         return $this->studentdayRef->name ?? $this->studentday ?? '-';

@@ -8,7 +8,9 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 p-0">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}"><i class="bx bx-home-alt"></i></a></li>
-                <li class="breadcrumb-item active" aria-current="page">Input Presensi & KBM</li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{ $isStudentdayMode ? 'Input Presensi & KBM Studentday' : 'Input Presensi & KBM Kelas' }}
+                </li>
             </ol>
         </nav>
     </div>
@@ -40,38 +42,98 @@
     </div>
 @endif
 
-<!-- Form Filter Kelas & Jam -->
+{{-- Tombol beralih mode jika user memiliki multi-role (Guru Studentday & Guru Kelas / Admin) --}}
+@if($isSpecificGuruStudentday && $hasRegularTeacherRole)
+    <div class="mb-3 d-flex justify-content-end">
+        @if($isStudentdayMode)
+            <a href="{{ route('teaching.index', ['mode' => 'regular', 'date' => $date]) }}" class="btn btn-sm btn-outline-secondary shadow-sm">
+                <i class="material-icons-outlined align-middle fs-6">swap_horiz</i> Beralih ke Mode Guru Kelas Reguler
+            </a>
+        @else
+            <a href="{{ route('teaching.index', ['mode' => 'studentday', 'date' => $date]) }}" class="btn btn-sm btn-primary shadow-sm">
+                <i class="material-icons-outlined align-middle fs-6">swap_horiz</i> Beralih ke Mode Guru Studentday
+            </a>
+        @endif
+    </div>
+@endif
+
+{{-- Peringatan jika Guru Studentday belum di-assign ke Studentday tertentu oleh Admin --}}
+@if($isStudentdayMode && $noStudentdayAssigned)
+    <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+        <i class="material-icons-outlined me-3 fs-3">warning</i>
+        <div>
+            <h5 class="alert-heading mb-1">Belum Ada Penugasan Studentday</h5>
+            <p class="mb-0">
+                Akun Anda berposisi sebagai <strong>Guru Studentday</strong>, namun belum terhubung ke bidang Studentday tertentu di database. Silakan hubungi <strong>Administrator</strong> untuk menentukan bidang Studentday Anda pada menu <strong>Data Studentday</strong>.
+            </p>
+        </div>
+    </div>
+@endif
+
+<!-- Form Filter Kelas / Studentday & Jam Pelajaran -->
 <div class="card mb-4">
     <div class="card-header bg-primary text-white">
-        <h5 class="mb-0 text-white"><i class="material-icons-outlined align-middle me-2">tune</i> Pilih Kelas & Jam Pelajaran</h5>
+        <h5 class="mb-0 text-white">
+            <i class="material-icons-outlined align-middle me-2">tune</i>
+            @if($isStudentdayMode)
+                Pilih Sesi Studentday: {{ $myStudentday ? $myStudentday->name : 'Guru Studentday' }}
+            @else
+                Pilih Kelas & Jam Pelajaran
+            @endif
+        </h5>
     </div>
     <div class="card-body">
         <form action="{{ route('teaching.index') }}" method="GET" class="row g-3 align-items-end">
+            @if($isStudentdayMode)
+                <input type="hidden" name="mode" value="studentday">
+            @else
+                <input type="hidden" name="mode" value="regular">
+            @endif
+
             <div class="col-md-4">
                 <label class="form-label fw-bold">Tanggal</label>
                 <input type="date" name="date" class="form-control" value="{{ $date }}" required>
             </div>
-            <div class="col-md-4">
-                <label class="form-label fw-bold">Kelas</label>
-                <select name="class_code" class="form-select" required>
-                    <option value="">-- Pilih Kelas --</option>
-                    @foreach($classList as $c)
-                        <option value="{{ $c->code }}" {{ $selectedClass == $c->code ? 'selected' : '' }}>
-                            {{ $c->code }} ({{ $c->school }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label fw-bold">Jam Pelajaran Ke-</label>
-                <select name="jam_ke" class="form-select" required>
-                    @for($i = 1; $i <= 10; $i++)
-                        <option value="{{ $i }}" {{ $selectedJam == $i ? 'selected' : '' }}>Jam ke-{{ $i }}</option>
-                    @endfor
-                </select>
-            </div>
+
+            @if($isStudentdayMode)
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Bidang Studentday</label>
+                    <input type="text" class="form-control fw-bold bg-light text-primary" value="{{ $myStudentday ? $myStudentday->name : 'Belum Ditentukan' }}" readonly>
+                    <small class="text-muted">
+                        <i class="material-icons-outlined fs-6 align-middle text-success">check_circle</i> Terdata otomatis untuk akun Anda
+                    </small>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Jam Pelajaran Ke-</label>
+                    <select name="jam_ke" class="form-select" required>
+                        <option value="1" {{ $selectedJam == 1 ? 'selected' : '' }}>Jam Ke-1 (Pagi)</option>
+                        <option value="2" {{ $selectedJam == 2 ? 'selected' : '' }}>Jam Ke-2 (Siang)</option>
+                    </select>
+                </div>
+            @else
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Kelas</label>
+                    <select name="class_code" class="form-select" required>
+                        <option value="">-- Pilih Kelas --</option>
+                        @foreach($classList as $c)
+                            <option value="{{ $c->code }}" {{ $selectedClass == $c->code ? 'selected' : '' }}>
+                                {{ $c->code }} ({{ $c->school }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Jam Pelajaran Ke-</label>
+                    <select name="jam_ke" class="form-select" required>
+                        @for($i = 1; $i <= 10; $i++)
+                            <option value="{{ $i }}" {{ $selectedJam == $i ? 'selected' : '' }}>Jam ke-{{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+            @endif
+
             <div class="col-md-1">
-                <button type="submit" class="btn btn-primary w-100">Buka</button>
+                <button type="submit" class="btn btn-primary w-100" {{ ($isStudentdayMode && !$myStudentday) ? 'disabled' : '' }}>Buka</button>
             </div>
         </form>
     </div>
@@ -82,7 +144,14 @@
         <div class="alert alert-warning d-flex align-items-center mb-3" role="alert">
             <i class="material-icons-outlined me-2 fs-4">lock</i>
             <div>
-                <strong>Sudah Di-Submit!</strong> Presensi dan Jurnal KBM untuk kelas <strong>{{ $selectedClass }}</strong> pada <strong>Jam ke-{{ $selectedJam }}</strong> sudah diisi. Sesuai aturan, data tidak dapat diubah oleh Guru biasa. Hubungi <strong>Guru Piket</strong> jika ada perubahan data.
+                <strong>Sudah Di-Submit!</strong> Presensi dan Jurnal KBM untuk <strong>{{ $selectedClass }}</strong> pada 
+                <strong>
+                    @if($isStudentdayMode)
+                        {{ $selectedJam == 1 ? 'Jam Ke-1 (Pagi)' : 'Jam Ke-2 (Siang)' }}
+                    @else
+                        Jam ke-{{ $selectedJam }}
+                    @endif
+                </strong> sudah diisi. Sesuai aturan, data tidak dapat diubah oleh Guru biasa. Hubungi <strong>Guru Piket</strong> jika ada perubahan data.
             </div>
         </div>
     @endif
@@ -95,14 +164,30 @@
 
         <!-- Card Presensi Siswa -->
         <div class="card mb-4">
-            <div class="card-header bg-dark text-white d-flex align-items-center justify-content-between">
-                <h5 class="mb-0 text-white"><i class="material-icons-outlined align-middle me-2">groups</i> Presensi Siswa Kelas {{ $selectedClass }} (Jam ke-{{ $selectedJam }})</h5>
-                <span class="badge bg-light text-dark">Tanggal: {{ \Carbon\Carbon::parse($date)->translatedFormat('d F Y') }}</span>
+            <div class="card-header bg-dark text-white d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <h5 class="mb-0 text-white">
+                    <i class="material-icons-outlined align-middle me-2">groups</i>
+                    @if($isStudentdayMode)
+                        Presensi Siswa Studentday {{ $selectedClass }} ({{ $selectedJam == 1 ? 'Jam Ke-1 (Pagi)' : 'Jam Ke-2 (Siang)' }})
+                    @else
+                        Presensi Siswa Kelas {{ $selectedClass }} (Jam ke-{{ $selectedJam }})
+                    @endif
+                </h5>
+                <div>
+                    <span class="badge bg-primary me-1">Total: {{ $students->count() }} Siswa</span>
+                    <span class="badge bg-light text-dark">Tanggal: {{ \Carbon\Carbon::parse($date)->translatedFormat('d F Y') }}</span>
+                </div>
             </div>
             <div class="card-body">
                 <div class="alert alert-info d-flex align-items-center mb-3" role="alert">
                     <i class="material-icons-outlined me-2 fs-5">info</i>
-                    <small>Siswa yang sudah dilaporkan <strong>Izin / Sakit / Alpha</strong> oleh guru di jam pelajaran sebelumnya tidak perlu di-input ulang.</small>
+                    <small>
+                        @if($isStudentdayMode)
+                            Siswa yang sudah dilaporkan <strong>Izin / Sakit / Alpha</strong> pada <strong>Jam Ke-1 (Pagi)</strong> tidak perlu di-input ulang pada Jam Ke-2 (Siang).
+                        @else
+                            Siswa yang sudah dilaporkan <strong>Izin / Sakit / Alpha</strong> oleh guru di jam pelajaran sebelumnya tidak perlu di-input ulang.
+                        @endif
+                    </small>
                 </div>
 
                 <div class="table-responsive">
@@ -112,9 +197,18 @@
                                 <th style="width: 50px;">#</th>
                                 <th>NIS / ID</th>
                                 <th>Nama Siswa</th>
+                                @if($isStudentdayMode)
+                                    <th>Kelas Asal</th>
+                                @endif
                                 <th style="width: 80px;">L/P</th>
                                 <th>Status Jam Sebelumnya</th>
-                                <th style="width: 250px;" class="text-center">Status Jam ke-{{ $selectedJam }}</th>
+                                <th style="width: 250px;" class="text-center">
+                                    @if($isStudentdayMode)
+                                        Status {{ $selectedJam == 1 ? 'Jam Ke-1 (Pagi)' : 'Jam Ke-2 (Siang)' }}
+                                    @else
+                                        Status Jam ke-{{ $selectedJam }}
+                                    @endif
+                                </th>
                                 <th style="width: 240px;" class="text-center">Catatan Khusus Siswa</th>
                             </tr>
                         </thead>
@@ -129,11 +223,20 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td><code>{{ $std->id_siswa }}</code></td>
                                     <td class="fw-bold">{{ $std->name }}</td>
+                                    @if($isStudentdayMode)
+                                        <td>
+                                            <span class="badge bg-secondary">{{ $std->classes ?? '-' }}</span>
+                                        </td>
+                                    @endif
                                     <td><span class="badge {{ $std->gender == 'L' ? 'bg-primary' : 'bg-danger' }}">{{ $std->gender }}</span></td>
                                     <td>
                                         @if($prevAbsence)
                                             <span class="badge bg-warning text-dark">
-                                                Jam ke-{{ $prevAbsence->jam_ke }}: {{ $prevAbsence->status }} ({{ $prevAbsence->user }})
+                                                @if($isStudentdayMode)
+                                                    {{ $prevAbsence->jam_ke == 1 ? 'Jam Ke-1 (Pagi)' : 'Jam ke-' . $prevAbsence->jam_ke }}: {{ $prevAbsence->status }} ({{ $prevAbsence->user }})
+                                                @else
+                                                    Jam ke-{{ $prevAbsence->jam_ke }}: {{ $prevAbsence->status }} ({{ $prevAbsence->user }})
+                                                @endif
                                             </span>
                                         @else
                                             <span class="badge bg-success">Hadir di jam sebelumnya</span>
@@ -142,7 +245,8 @@
                                     <td>
                                         @if($prevAbsence)
                                             <div class="text-center text-muted fw-bold">
-                                                <i class="material-icons-outlined fs-6 align-middle">check_circle</i> Terbawa Status Jam {{ $prevAbsence->jam_ke }}
+                                                <i class="material-icons-outlined fs-6 align-middle">check_circle</i>
+                                                Terbawa Status {{ $isStudentdayMode && $prevAbsence->jam_ke == 1 ? 'Jam Ke-1 (Pagi)' : 'Jam ' . $prevAbsence->jam_ke }}
                                             </div>
                                         @else
                                             <div class="btn-group w-100" role="group">
@@ -185,7 +289,13 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted">Tidak ada data siswa terdaftar pada kelas ini.</td>
+                                    <td colspan="{{ $isStudentdayMode ? 8 : 7 }}" class="text-center text-muted py-4">
+                                        @if($isStudentdayMode)
+                                            Belum ada siswa yang terdaftar pada bidang Studentday {{ $selectedClass }}.
+                                        @else
+                                            Tidak ada data siswa terdaftar pada kelas ini.
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -197,7 +307,14 @@
         <!-- Card Jurnal Mengajar KBM -->
         <div class="card mb-4">
             <div class="card-header bg-secondary text-white">
-                <h5 class="mb-0 text-white"><i class="material-icons-outlined align-middle me-2">menu_book</i> Jurnal Mengajar (KBM) Guru</h5>
+                <h5 class="mb-0 text-white">
+                    <i class="material-icons-outlined align-middle me-2">menu_book</i>
+                    @if($isStudentdayMode)
+                        Jurnal Pembelajaran Studentday (KBM)
+                    @else
+                        Jurnal Mengajar (KBM) Guru
+                    @endif
+                </h5>
             </div>
             <div class="card-body">
                 <div class="mb-3">
@@ -248,7 +365,13 @@
                                         <div class="d-flex w-100 justify-content-between align-items-center mb-1">
                                             <h6 class="mb-1 text-primary">
                                                 <i class="material-icons-outlined fs-6 align-middle">person</i> {{ $n->teacher->name ?? $n->teacher_name ?? $n->created_by }}
-                                                <span class="badge bg-secondary ms-2">Jam ke-{{ $n->jam_ke }}</span>
+                                                <span class="badge bg-secondary ms-2">
+                                                    @if($isStudentdayMode)
+                                                        {{ $n->jam_ke == 1 ? 'Jam Ke-1 (Pagi)' : ($n->jam_ke == 2 ? 'Jam Ke-2 (Siang)' : 'Jam ke-' . $n->jam_ke) }}
+                                                    @else
+                                                        Jam ke-{{ $n->jam_ke }}
+                                                    @endif
+                                                </span>
                                             </h6>
                                             <small class="text-muted">{{ $n->created_at ? $n->created_at->format('H:i') : '' }} WIB</small>
                                         </div>
@@ -369,7 +492,7 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Siswa</label>
-                                <input type="text" class="form-control" value="{{ $std->name }} ({{ $std->id_siswa }}) - Kelas {{ $selectedClass }}" readonly>
+                                <input type="text" class="form-control" value="{{ $std->name }} ({{ $std->id_siswa }}) - {{ $selectedClass }}" readonly>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Isi Catatan <span class="text-danger">*</span></label>
@@ -386,10 +509,12 @@
         </div>
     @endforeach
 @else
-    <div class="card p-5 text-center text-muted">
-        <i class="material-icons-outlined display-1 text-secondary mb-3">class</i>
-        <h4>Silahkan Pilih Kelas dan Jam Pelajaran</h4>
-        <p class="mb-0">Gunakan filter di atas untuk memulai menginput presensi siswa dan jurnal kegiatan mengajar.</p>
-    </div>
+    @if(!$isStudentdayMode || $noStudentdayAssigned)
+        <div class="card p-5 text-center text-muted">
+            <i class="material-icons-outlined display-1 text-secondary mb-3">class</i>
+            <h4>Silahkan Pilih Kelas dan Jam Pelajaran</h4>
+            <p class="mb-0">Gunakan filter di atas untuk memulai menginput presensi siswa dan jurnal kegiatan mengajar.</p>
+        </div>
+    @endif
 @endif
 @endsection

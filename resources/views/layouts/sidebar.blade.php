@@ -19,8 +19,8 @@
                 </a>
             </li>
 
-            <!-- Pelaporan Guru (Guru Pengajar / Kelas) -->
-            @if(Auth::user()->hasPosition('Guru Kelas') || Auth::user()->hasPosition('Pengajar'))
+            <!-- Pelaporan Guru (Guru Pengajar / Kelas / Studentday) -->
+            @if(Auth::user()->hasPosition('Guru Kelas') || Auth::user()->hasPosition('Pengajar') || Auth::user()->hasPosition('Guru Studentday'))
                 <li class="menu-label">PELAPORAN GURU</li>
                 <li {{ Request::is('teaching') && !Request::is('teaching/history') ? 'class="mm-active"' : '' }}>
                     <a href="{{ route('teaching.index') }}">
@@ -34,6 +34,14 @@
                         <div class="menu-title">Riwayat KBM Saya</div>
                     </a>
                 </li>
+                @if(Auth::user()->hasPosition('Guru Studentday'))
+                    <li {{ Request::is('studentdays-members*') && !Request::is('studentdays-members/history*') ? 'class="mm-active"' : '' }}>
+                        <a href="{{ route('studentday-members.index') }}">
+                            <div class="parent-icon"><i class="material-icons-outlined">people_alt</i></div>
+                            <div class="menu-title">Anggota Studentday</div>
+                        </a>
+                    </li>
+                @endif
             @endif
 
             <!-- Wali Kelas -->
@@ -143,6 +151,18 @@
                     <a href="{{ route('classes.index') }}">
                         <div class="parent-icon"><i class="material-icons-outlined">meeting_room</i></div>
                         <div class="menu-title">Data Kelas</div>
+                    </a>
+                </li>
+                <li {{ Request::is('studentdays*') ? 'class="mm-active"' : '' }}>
+                    <a href="{{ route('studentdays.index') }}">
+                        <div class="parent-icon"><i class="material-icons-outlined">category</i></div>
+                        <div class="menu-title">Data Studentday</div>
+                    </a>
+                </li>
+                <li {{ Request::is('studentdays-members/history*') ? 'class="mm-active"' : '' }}>
+                    <a href="{{ route('studentday-members.history') }}">
+                        <div class="parent-icon"><i class="material-icons-outlined">manage_history</i></div>
+                        <div class="menu-title">Riwayat Siswa Studentday</div>
                     </a>
                 </li>
                 <li {{ Request::is('students*') ? 'class="mm-active"' : '' }}>

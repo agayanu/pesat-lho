@@ -25,4 +25,9 @@ class Studentday extends Model
     {
         return $this->hasMany(Student::class, 'studentday');
     }
+
+    public function exitedStudents()
+    {
+        return $this->hasMany(StudentdayExitedStudent::class, 'studentday_id');
+    }
 }

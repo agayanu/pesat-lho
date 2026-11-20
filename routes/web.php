@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ClassController;
+use App\Http\Controllers\StudentdayController;
+use App\Http\Controllers\StudentdayMemberController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TeachingModuleController;
@@ -30,6 +32,13 @@ Route::middleware(['auth'])->group(function () {
     // Master Data Routes
     Route::resource('positions', PositionController::class)->except(['create', 'edit', 'show']);
     Route::resource('classes', ClassController::class)->except(['create', 'edit', 'show']);
+    Route::resource('studentdays', StudentdayController::class)->except(['create', 'edit', 'show']);
+    // Pengelolaan Anggota & Riwayat Siswa Studentday
+    Route::get('studentdays-members', [StudentdayMemberController::class, 'index'])->name('studentday-members.index');
+    Route::post('studentdays-members/add', [StudentdayMemberController::class, 'addMember'])->name('studentday-members.add');
+    Route::delete('studentdays-members/{id}/remove', [StudentdayMemberController::class, 'removeMember'])->name('studentday-members.remove');
+    Route::post('studentdays-members/{id}/exit', [StudentdayMemberController::class, 'exitMember'])->name('studentday-members.exit');
+    Route::get('studentdays-members/history', [StudentdayMemberController::class, 'history'])->name('studentday-members.history');
     
     // Data Siswa & Upload Template Excel
     Route::get('students/template', [StudentController::class, 'downloadTemplate'])->name('students.template');

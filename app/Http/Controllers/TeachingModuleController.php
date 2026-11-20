@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Classes;
 use App\Models\Student;
 use App\Models\StudentAbsence;
+use App\Models\Studentday;
 use App\Models\StudentNote;
 use App\Models\TeachingJournal;
 use Illuminate\Http\Request;
@@ -14,27 +15,80 @@ class TeachingModuleController extends Controller
 {
     public function index(Request $request)
     {
+        $user = Auth::user();
         $date = $request->query('date', date('Y-m-d'));
-        $selectedClass = $request->query('class_code');
-        $selectedJam = $request->query('jam_ke', 1);
 
-        $classList = Classes::orderBy('code', 'asc')->get();
+        // Cek posisi spesifik Guru Studentday atau penugasan studentday
+        $isSpecificGuruStudentday = (
+            ($user->pos && str_contains(strtolower($user->pos->name), 'studentday')) ||
+            $user->positions()->where('name', 'like', '%Studentday%')->exists() ||
+            Studentday::where('teacher', $user->id)->exists()
+        );
+
+        $hasRegularTeacherRole = (
+            ($user->pos && (str_contains(strtolower($user->pos->name), 'guru kelas') || str_contains(strtolower($user->pos->name), 'pengajar'))) ||
+            $user->positions()->where(function($q) {
+                $q->where('name', 'like', '%Guru Kelas%')->orWhere('name', 'like', '%Pengajar%');
+            })->exists() ||
+            $user->position == 1 ||
+            $user->hasPosition('Administrator')
+        );
+
+        // Tentukan mode: jika akun Guru Studentday, default-nya mode Studentday
+        $requestedMode = $request->query('mode');
+        if ($requestedMode === 'regular') {
+            $isStudentdayMode = false;
+        } elseif ($requestedMode === 'studentday') {
+            $isStudentdayMode = true;
+        } else {
+            $isStudentdayMode = $isSpecificGuruStudentday;
+        }
+
+        $myStudentday = null;
+        $noStudentdayAssigned = false;
+        $classList = collect();
+
+        if ($isStudentdayMode) {
+            $myStudentday = Studentday::where('teacher', $user->id)->first();
+            if (!$myStudentday) {
+                $noStudentdayAssigned = true;
+            }
+
+            // Guru studentday tidak perlu memilih kelas karena sudah terdata dia mengajar studentday apa
+            $selectedClass = $myStudentday ? $myStudentday->name : null;
+
+            // Jam pelajaran hanya muncul 2 pilihan: 1 = Jam Ke-1 (Pagi), 2 = Jam Ke-2 (Siang)
+            $selectedJam = (int) $request->query('jam_ke', 1);
+            if ($selectedJam !== 1 && $selectedJam !== 2) {
+                $selectedJam = 1;
+            }
+        } else {
+            $classList = Classes::orderBy('code', 'asc')->get();
+            $selectedClass = $request->query('class_code');
+            $selectedJam = (int) $request->query('jam_ke', 1);
+        }
 
         $students = collect();
         $previousAbsences = collect();
         $currentAbsences = collect();
         $existingJournal = null;
         $isAlreadySubmitted = false;
-
         $studentNotes = collect();
 
         if ($selectedClass) {
-            // Get all students in selected class
-            $students = Student::where('classes', $selectedClass)
-                ->orderBy('name', 'asc')
-                ->get();
+            if ($isStudentdayMode && $myStudentday) {
+                // Data siswa yang perlu dia absen sesuai dengan tabel students field studentday
+                $students = Student::where('studentday', $myStudentday->id)
+                    ->orderBy('name', 'asc')
+                    ->get();
+            } else {
+                // Ambil seluruh siswa pada kelas yang dipilih
+                $students = Student::where('classes', $selectedClass)
+                    ->orderBy('name', 'asc')
+                    ->get();
+            }
 
-            // Get absences reported in earlier sessions today for this class
+            // Ambil absensi sesi lebih awal hari ini untuk kelas/studentday ini
             $previousAbsences = StudentAbsence::with('student')
                 ->where('date', $date)
                 ->where('class_code', $selectedClass)
@@ -42,14 +96,14 @@ class TeachingModuleController extends Controller
                 ->get()
                 ->keyBy('student_id');
 
-            // Get absences reported in current session today
+            // Ambil absensi pada sesi saat ini
             $currentAbsences = StudentAbsence::where('date', $date)
                 ->where('class_code', $selectedClass)
                 ->where('jam_ke', $selectedJam)
                 ->get()
                 ->keyBy('student_id');
 
-            // Get all notes for students in this class today
+            // Ambil catatan siswa hari ini
             $studentNotes = StudentNote::with(['teacher'])
                 ->where('date', $date)
                 ->where('class_code', $selectedClass)
@@ -57,7 +111,7 @@ class TeachingModuleController extends Controller
                 ->get()
                 ->groupBy('student_id');
 
-            // Get existing journal for current session
+            // Ambil jurnal mengajar sesi saat ini jika sudah ada
             $existingJournal = TeachingJournal::with('teacher')
                 ->where('date', $date)
                 ->where('class_code', $selectedClass)
@@ -79,7 +133,12 @@ class TeachingModuleController extends Controller
             'currentAbsences',
             'studentNotes',
             'existingJournal',
-            'isAlreadySubmitted'
+            'isAlreadySubmitted',
+            'isStudentdayMode',
+            'isSpecificGuruStudentday',
+            'hasRegularTeacherRole',
+            'myStudentday',
+            'noStudentdayAssigned'
         ));
     }
 
@@ -94,7 +153,7 @@ class TeachingModuleController extends Controller
             'absences'      => 'nullable|array',
             'student_notes' => 'nullable|array',
         ], [
-            'class_code.required' => 'Kelas wajib dipilih',
+            'class_code.required' => 'Kelas / Bidang Studentday wajib diisi',
             'jam_ke.required'     => 'Jam pelajaran wajib dipilih',
             'material.required'   => 'Materi pembelajaran wajib diisi',
             'activity.required'   => 'Deskripsi kegiatan pembelajaran wajib diisi',
@@ -210,6 +269,12 @@ class TeachingModuleController extends Controller
             ->orderBy('jam_ke', 'asc')
             ->get();
 
-        return view('teaching.history', compact('date', 'myJournals'));
+        $isGuruStudentday = (
+            (Auth::user()->pos && str_contains(strtolower(Auth::user()->pos->name), 'studentday')) ||
+            Auth::user()->positions()->where('name', 'like', '%Studentday%')->exists() ||
+            Studentday::where('teacher', $userId)->exists()
+        );
+
+        return view('teaching.history', compact('date', 'myJournals', 'isGuruStudentday'));
     }
 }

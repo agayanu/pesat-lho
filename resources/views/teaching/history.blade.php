@@ -47,8 +47,8 @@
                 <thead class="table-secondary">
                     <tr>
                         <th style="width: 50px;">#</th>
-                        <th style="width: 100px;">Jam Ke-</th>
-                        <th style="width: 120px;">Kelas</th>
+                        <th style="width: 150px;">Jam Ke-</th>
+                        <th style="width: 160px;">Kelas / Studentday</th>
                         <th>Materi Pembelajaran</th>
                         <th>Deskripsi Kegiatan</th>
                         <th style="width: 150px;">Waktu Input</th>
@@ -58,11 +58,19 @@
                     @forelse($myJournals as $index => $j)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td><span class="badge bg-primary fs-6">Jam ke-{{ $j->jam_ke }}</span></td>
-                            <td><strong class="text-dark">{{ $j->class_code }}</strong></td>
+                            <td>
+                                @if($isGuruStudentday)
+                                    <span class="badge bg-primary fs-6">
+                                        {{ $j->jam_ke == 1 ? 'Jam Ke-1 (Pagi)' : ($j->jam_ke == 2 ? 'Jam Ke-2 (Siang)' : 'Jam ke-' . $j->jam_ke) }}
+                                    </span>
+                                @else
+                                    <span class="badge bg-primary fs-6">Jam ke-{{ $j->jam_ke }}</span>
+                                @endif
+                            </td>
+                            <td><strong class="text-primary">{{ $j->class_code }}</strong></td>
                             <td>{{ $j->material }}</td>
                             <td>{{ $j->activity }}</td>
-                            <td><small class="text-muted">{{ $j->created_at->format('H:i:s') }} WIB</small></td>
+                            <td><small class="text-muted">{{ $j->created_at ? $j->created_at->format('H:i:s') : '-' }} WIB</small></td>
                         </tr>
                     @empty
                         <tr>
