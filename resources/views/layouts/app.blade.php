@@ -105,9 +105,14 @@
                 justify-content: center;
                 width: 100%;
             }
-        /* Global Modal Long Content & Scrolling Fixes */
+        /* ========================================================
+           Global Modal Scrollable & Responsive Height Fixes
+           Mengatasi masalah konten modal terpotong dan tidak bisa di-scroll
+           karena pola struktur <div class="modal-content"><form>...</form></div>
+           ======================================================== */
         .modal {
             z-index: 1055 !important;
+            overflow-x: hidden !important;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch;
         }
@@ -118,25 +123,57 @@
             cursor: pointer;
             touch-action: manipulation;
         }
-        /* Memastikan modal-dialog-scrollable dan body-nya scrollable sempurna */
-        .modal-dialog-scrollable {
-            max-height: calc(100% - 2rem);
+
+        /* Batasi tinggi dialog agar tidak melebihi tinggi layar viewport */
+        .modal-dialog {
+            max-height: calc(100vh - 2rem);
+            margin: 1rem auto;
         }
-        .modal-dialog-scrollable .modal-content {
-            max-height: 100%;
-            overflow: hidden;
+        @media (min-width: 576px) {
+            .modal-dialog {
+                max-height: calc(100vh - 3.5rem);
+                margin: 1.75rem auto;
+            }
         }
-        .modal-dialog-scrollable .modal-body {
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
-        }
-        /* Fallback otomatis jika ada modal yang kontennya panjang */
+
+        /* Modal content sebagai flex container dengan tinggi terkontrol */
         .modal-dialog .modal-content {
-            max-height: calc(100vh - 3.5rem);
+            max-height: calc(100vh - 3.5rem) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
         }
-        .modal-dialog .modal-body {
+
+        /* KUNCI: Form di dalam modal-content harus menjadi flex container setinggi 100% modal-content */
+        .modal-dialog .modal-content > form {
+            display: flex !important;
+            flex-direction: column !important;
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+            height: 100% !important;
+            max-height: 100% !important;
+            overflow: hidden !important;
+        }
+
+        /* Header modal selalu tetap di atas (sticky) */
+        .modal-dialog .modal-header,
+        .modal-dialog .modal-content > form > .modal-header {
+            flex-shrink: 0 !important;
+        }
+
+        /* Body modal (baik langsung maupun di dalam form) fleksibel & scrollable */
+        .modal-dialog .modal-body,
+        .modal-dialog .modal-content > form > .modal-body {
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch;
+        }
+
+        /* Footer modal selalu tetap di bawah (sticky) */
+        .modal-dialog .modal-footer,
+        .modal-dialog .modal-content > form > .modal-footer {
+            flex-shrink: 0 !important;
         }
     </style>
     @yield('css')

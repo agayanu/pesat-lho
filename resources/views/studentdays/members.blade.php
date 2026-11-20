@@ -260,18 +260,18 @@
     <div class="modal fade" id="modalAddMember" tabindex="-1" aria-labelledby="modalAddMemberLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <form action="{{ route('studentday-members.add') }}" method="POST">
+                <form action="{{ route('studentday-members.add') }}" method="POST" class="d-flex flex-column h-100 overflow-hidden">
                     @csrf
                     <input type="hidden" name="studentday_id" value="{{ $currentStudentday->id }}">
 
-                    <div class="modal-header bg-primary text-white">
+                    <div class="modal-header bg-primary text-white flex-shrink-0">
                         <h5 class="modal-title text-white" id="modalAddMemberLabel">
                             <i class="material-icons-outlined align-middle me-1">person_add</i> Tambah Anggota ke Studentday: {{ $currentStudentday->name }}
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <div class="modal-body">
+                    <div class="modal-body overflow-y-auto">
                         <div class="alert alert-info py-2 mb-3">
                             <small>
                                 <i class="material-icons-outlined fs-6 align-middle me-1">info</i> 
@@ -307,7 +307,7 @@
                         </div>
 
                         <!-- Daftar Siswa -->
-                        <div class="border rounded p-2" style="max-height: 380px; overflow-y: auto;">
+                        <div class="border rounded p-2" style="max-height: 280px; overflow-y: auto;">
                             <table class="table table-sm table-hover align-middle mb-0" id="tableModalStudents">
                                 <thead class="table-light sticky-top">
                                     <tr>
@@ -367,7 +367,7 @@
                         </div>
                     </div>
 
-                    <div class="modal-footer">
+                    <div class="modal-footer flex-shrink-0 bg-light">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary" id="btnSubmitAddMember">
                             <i class="material-icons-outlined align-middle fs-6 me-1">check</i> Tambahkan Siswa Terpilih
@@ -383,15 +383,15 @@
         <div class="modal fade" id="modalExitMember{{ $member->id }}" tabindex="-1" aria-labelledby="modalExitMemberLabel{{ $member->id }}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-                    <form action="{{ route('studentday-members.exit', $member->id) }}" method="POST">
+                    <form action="{{ route('studentday-members.exit', $member->id) }}" method="POST" class="d-flex flex-column h-100 overflow-hidden">
                         @csrf
-                        <div class="modal-header bg-warning">
+                        <div class="modal-header bg-warning flex-shrink-0">
                             <h5 class="modal-title text-dark" id="modalExitMemberLabel{{ $member->id }}">
                                 <i class="material-icons-outlined align-middle me-1">logout</i> Keluarkan Siswa dari Studentday
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body text-start">
+                        <div class="modal-body overflow-y-auto text-start">
                             <div class="alert alert-warning py-2 mb-3">
                                 <small>
                                     <i class="material-icons-outlined fs-6 align-middle me-1">info</i>
@@ -431,7 +431,7 @@
                                 <textarea name="notes" class="form-control" rows="3" placeholder="Contoh: Siswa berminat pindah ke Studentday Programming, atau siswa naik ke kelas XII..."></textarea>
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer flex-shrink-0 bg-light">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                             <button type="submit" class="btn btn-warning text-dark">
                                 <i class="material-icons-outlined align-middle fs-6 me-1">logout</i> Konfirmasi Keluarkan Siswa
