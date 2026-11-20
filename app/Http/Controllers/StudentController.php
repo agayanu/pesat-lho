@@ -239,15 +239,12 @@ class StudentController extends Controller
         $student = Student::findOrFail($id);
 
         $request->validate([
-            'id_siswa'   => 'required|string|max:100|unique:students,id_siswa,' . $id,
             'name'       => 'required|string|max:255',
             'gender'     => 'required|in:L,P',
             'classes'    => 'required|string|max:100',
             'program'    => 'nullable|string|max:100',
             'studentday' => 'nullable|string|max:255',
         ], [
-            'id_siswa.required' => 'ID/NIS Siswa wajib diisi',
-            'id_siswa.unique'   => 'ID/NIS Siswa sudah terdaftar',
             'name.required'     => 'Nama siswa wajib diisi',
             'gender.required'   => 'Jenis kelamin wajib dipilih',
             'classes.required'  => 'Kelas wajib dipilih/diisi',
@@ -262,7 +259,6 @@ class StudentController extends Controller
         }
 
         $student->update([
-            'id_siswa'   => $request->id_siswa,
             'name'       => $request->name,
             'gender'     => $request->gender,
             'classes'    => $request->classes,

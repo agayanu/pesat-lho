@@ -181,7 +181,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label fw-bold">ID / NIS Siswa</label>
-                            <input type="text" name="id_siswa" class="form-control" value="{{ old('id_siswa', $std->id_siswa) }}" required>
+                            <input type="text" name="id_siswa" class="form-control" value="{{ old('id_siswa', $std->id_siswa) }}" disabled>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Nama Siswa</label>
