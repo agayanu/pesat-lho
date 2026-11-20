@@ -376,7 +376,7 @@
 
                                         <!-- Modal Edit Catatan Piket -->
                                         <div class="modal fade text-start" id="editNoteModal{{ $sn->id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog">
+                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                 <div class="modal-content">
                                                     <form action="{{ route('piket.student-notes.update', $sn->id) }}" method="POST">
                                                         @csrf
@@ -410,7 +410,7 @@
 
                                         <!-- Modal Hapus Catatan Piket -->
                                         <div class="modal fade text-start" id="deleteNoteModal{{ $sn->id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog">
+                                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                                 <div class="modal-content">
                                                     <form action="{{ route('piket.student-notes.destroy', $sn->id) }}" method="POST">
                                                         @csrf

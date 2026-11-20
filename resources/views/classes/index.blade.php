@@ -98,7 +98,7 @@
 <!-- Modal Edit Section (Out of table) -->
 @foreach($classes as $cls)
     <div class="modal fade" id="modalEdit{{ $cls->id }}" tabindex="-1" aria-labelledby="modalEditLabel{{ $cls->id }}" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <form action="{{ route('classes.update', $cls->id) }}" method="POST">
                     @csrf
@@ -143,7 +143,7 @@
 
 <!-- Modal Create -->
 <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('classes.store') }}" method="POST">
                 @csrf

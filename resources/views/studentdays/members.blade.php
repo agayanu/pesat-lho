@@ -258,7 +258,7 @@
 
     <!-- Modal Tambah Siswa / Anggota -->
     <div class="modal fade" id="modalAddMember" tabindex="-1" aria-labelledby="modalAddMemberLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <form action="{{ route('studentday-members.add') }}" method="POST">
                     @csrf
@@ -381,7 +381,7 @@
     <!-- Modals Keluarkan Siswa (Untuk Setiap Anggota Aktif) -->
     @foreach($activeMembers as $member)
         <div class="modal fade" id="modalExitMember{{ $member->id }}" tabindex="-1" aria-labelledby="modalExitMemberLabel{{ $member->id }}" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <form action="{{ route('studentday-members.exit', $member->id) }}" method="POST">
                         @csrf

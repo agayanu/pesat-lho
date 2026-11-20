@@ -123,7 +123,7 @@
 <!-- Modal Koreksi Presensi Section (Out of table for full mobile compatibility) -->
 @foreach($absences as $abs)
     <div class="modal fade" id="modalKoreksi{{ $abs->id }}" tabindex="-1" aria-labelledby="modalKoreksiLabel{{ $abs->id }}" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <form action="{{ route('piket.student-absences.update', $abs->id) }}" method="POST">
                     @csrf

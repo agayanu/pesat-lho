@@ -346,7 +346,7 @@
         <!-- Modal Lihat Catatan Siswa -->
         @if($stdNotes->isNotEmpty())
             <div class="modal fade" id="viewNotesModal{{ $std->id }}" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                     <div class="modal-content">
                         <div class="modal-header bg-primary text-white">
                             <h5 class="modal-title text-white">
@@ -410,7 +410,7 @@
                 @foreach($stdNotes as $n)
                     <!-- Modal Edit Catatan Piket -->
                     <div class="modal fade text-start" id="editStudentNoteModal{{ $n->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content">
                                 <form action="{{ route('piket.student-notes.update', $n->id) }}" method="POST">
                                     @csrf
@@ -444,7 +444,7 @@
 
                     <!-- Modal Hapus Catatan Piket -->
                     <div class="modal fade text-start" id="deleteStudentNoteModal{{ $n->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content">
                                 <form action="{{ route('piket.student-notes.destroy', $n->id) }}" method="POST">
                                     @csrf
@@ -477,7 +477,7 @@
 
         <!-- Modal Tambah Catatan Cepat (jika form utama sudah di-submit) -->
         <div class="modal fade" id="quickAddNoteModal{{ $std->id }}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <form action="{{ route('teaching.student-notes.store') }}" method="POST">
                         @csrf

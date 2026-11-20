@@ -128,7 +128,7 @@
 
 <!-- Modal Catat Siswa Keluar Satu Persatu -->
 <div class="modal fade" id="modalCreateExitedStudent" tabindex="-1" aria-labelledby="modalCreateExitedStudentLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('exited-students.store') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mencatat siswa ini keluar? Data siswa akan otomatis dipindahkan dari tabel siswa aktif ke tabel Siswa Keluar.');">
                 @csrf

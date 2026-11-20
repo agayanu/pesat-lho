@@ -105,9 +105,11 @@
                 justify-content: center;
                 width: 100%;
             }
-        /* Mobile Modal & Touch Fixes */
+        /* Global Modal Long Content & Scrolling Fixes */
         .modal {
             z-index: 1055 !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
         }
         .modal-backdrop {
             z-index: 1050 !important;
@@ -115,6 +117,26 @@
         [data-bs-toggle="modal"] {
             cursor: pointer;
             touch-action: manipulation;
+        }
+        /* Memastikan modal-dialog-scrollable dan body-nya scrollable sempurna */
+        .modal-dialog-scrollable {
+            max-height: calc(100% - 2rem);
+        }
+        .modal-dialog-scrollable .modal-content {
+            max-height: 100%;
+            overflow: hidden;
+        }
+        .modal-dialog-scrollable .modal-body {
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+        }
+        /* Fallback otomatis jika ada modal yang kontennya panjang */
+        .modal-dialog .modal-content {
+            max-height: calc(100vh - 3.5rem);
+        }
+        .modal-dialog .modal-body {
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
     @yield('css')
@@ -141,7 +163,7 @@
 <script src="{{ asset('metoxi/js/main.js') }}"></script>
 <!-- Modal Filter Cetak LHO Terpadu -->
 <div class="modal fade" id="modalFilterCetakLHO" tabindex="-1" aria-labelledby="modalFilterCetakLHOLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('lho.print') }}" method="GET" target="_blank" onsubmit="$('#modalFilterCetakLHO').modal('hide');">
                 <div class="modal-header bg-primary text-white">

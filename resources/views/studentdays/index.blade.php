@@ -127,7 +127,7 @@
 
 <!-- Modal Tambah Studentday -->
 <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('studentdays.store') }}" method="POST">
                 @csrf
@@ -170,7 +170,7 @@
 <!-- Modal Edit Studentday -->
 @foreach($studentdays as $sd)
     <div class="modal fade" id="modalEdit{{ $sd->id }}" tabindex="-1" aria-labelledby="modalEditLabel{{ $sd->id }}" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <form action="{{ route('studentdays.update', $sd->id) }}" method="POST">
                     @csrf

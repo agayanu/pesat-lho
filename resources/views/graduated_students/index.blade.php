@@ -131,7 +131,7 @@
 
 <!-- Modal 1: Kelulusan Berdasarkan Kelas (Checklist Banyak Kelas) -->
 <div class="modal fade" id="modalGraduateByClasses" tabindex="-1" aria-labelledby="modalGraduateByClassesLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('graduated-students.store-by-classes') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin memproses kelulusan untuk seluruh siswa aktif pada kelas-kelas yang dipilih? Data siswa akan dipindahkan dari tabel siswa aktif ke tabel Siswa Lulus.');">
                 @csrf
@@ -209,7 +209,7 @@
 
 <!-- Modal 2: Kelulusan Siswa Tertentu (Memilih Siswa Karena Ada Yang Tidak Lulus) -->
 <div class="modal fade" id="modalGraduateByStudents" tabindex="-1" aria-labelledby="modalGraduateByStudentsLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('graduated-students.store-by-students') }}" method="POST" onsubmit="return confirm('Proses kelulusan untuk siswa yang telah dicentang? Siswa yang diluluskan akan dipindahkan dari tabel siswa aktif ke tabel Siswa Lulus.');">
                 @csrf

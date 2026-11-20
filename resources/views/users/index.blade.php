@@ -115,7 +115,7 @@
 <!-- Modal Modals Edit Section (Rendered outside table for full mobile compatibility) -->
 @foreach($users as $u)
     <div class="modal fade" id="editModal{{ $u->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $u->id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <form action="{{ route('users.update', $u->id) }}" method="POST">
                     @csrf
@@ -189,7 +189,7 @@
 
 <!-- Modal Tambah User -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('users.store') }}" method="POST">
                 @csrf

@@ -123,7 +123,7 @@
 
 <!-- Modal Upload Data Siswa Excel -->
 <div class="modal fade" id="modalUploadStudents" tabindex="-1" aria-labelledby="modalUploadStudentsLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('students.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -169,7 +169,7 @@
 <!-- Modal Edit Section (Out of table) -->
 @foreach($students as $std)
     <div class="modal fade" id="modalEdit{{ $std->id }}" tabindex="-1" aria-labelledby="modalEditLabel{{ $std->id }}" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <form action="{{ route('students.update', $std->id) }}" method="POST">
                     @csrf
@@ -238,7 +238,7 @@
 
 <!-- Modal Create -->
 <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('students.store') }}" method="POST">
                 @csrf

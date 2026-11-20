@@ -97,7 +97,7 @@
 <!-- Modal Edit Section (Out of table) -->
 @foreach($positions as $pos)
     <div class="modal fade" id="modalEdit{{ $pos->id }}" tabindex="-1" aria-labelledby="modalEditLabel{{ $pos->id }}" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <form action="{{ route('positions.update', $pos->id) }}" method="POST">
                     @csrf
@@ -124,7 +124,7 @@
 
 <!-- Modal Create -->
 <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <form action="{{ route('positions.store') }}" method="POST">
                 @csrf
